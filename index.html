@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuorixAI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0a0a0f; --bg-secondary: #12121a; --card: #1a1a28; --border: #2a2a3e;
+    --fg: #e8e6f0; --muted: #7a7890; --accent: #00e68a; --accent-dim: rgba(0,230,138,0.12);
+    --accent-glow: rgba(0,230,138,0.25); --user-bubble: #1e2a3a; --ai-bubble: #1a1a28; --danger: #ff4466;
+    --panel-bg: #0d1117; --panel-border: #1b2230;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--fg); height: 100vh; overflow: hidden; }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  .bg-mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse 600px 400px at 15% 20%, rgba(0,230,138,0.06) 0%, transparent 70%), radial-gradient(ellipse 500px 500px at 85% 75%, rgba(0,180,230,0.04) 0%, transparent 70%); }
+  .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: orbFloat 20s ease-in-out infinite alternate; }
+  .orb-1 { width: 300px; height: 300px; top: 10%; left: 5%; background: rgba(0,230,138,0.07); }
+  .orb-2 { width: 250px; height: 250px; bottom: 15%; right: 10%; background: rgba(0,180,240,0.05); animation-delay: -7s; animation-duration: 25s; }
+  @keyframes orbFloat { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -40px) scale(1.1); } 100% { transform: translate(10px, -10px) scale(1.05); } }
+
+  .app-container { position: relative; z-index: 1; display: flex; height: 100vh; width: 100vw; }
+  .chat-column { flex: 1; display: flex; flex-direction: column; min-width: 0; transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .chat-column.panel-open { margin-right: 50vw; }
+
+  .app-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); background: rgba(10,10,15,0.8); flex-shrink: 0; }
+  .logo-group { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), #00b4d8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #0a0a0f; box-shadow: 0 0 20px var(--accent-glow); }
+  .logo-text { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; } .logo-text span { color: var(--accent); }
+  .header-actions { display: flex; gap: 8px; }
+  .btn-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 14px; }
+  .btn-icon:hover { background: var(--border); color: var(--fg); }
+
+  .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 24px; padding: 40px; }
+  .welcome-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--accent), #00b4d8); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #0a0a0f; box-shadow: 0 0 40px var(--accent-glow); }
+  .welcome-title { font-size: 32px; font-weight: 700; letter-spacing: -1px; } .welcome-title span { color: var(--accent); }
+  .welcome-sub { color: var(--muted); font-size: 16px; max-width: 440px; line-height: 1.6; }
+  .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 500px; width: 100%; margin-top: 8px; }
+  .quick-btn { padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); color: var(--fg); cursor: pointer; text-align: left; transition: all 0.25s; font-family: inherit; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+  .quick-btn:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-2px); }
+  .quick-btn i { color: var(--accent); font-size: 16px; width: 20px; text-align: center; }
+
+  .msg-row { display: flex; gap: 10px; animation: msgIn 0.35s ease-out; } .msg-row.user { flex-direction: row-reverse; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-avatar { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .msg-row.ai .msg-avatar { background: linear-gradient(135deg, var(--accent), #00b4d8); color: #0a0a0f; }
+  .msg-row.user .msg-avatar { background: #2a3a50; color: #8ab4f8; }
+  .msg-content { max-width: 75%; padding: 14px 18px; border-radius: 16px; font-size: 14.5px; line-height: 1.65; }
+  .msg-row.ai .msg-content { background: var(--ai-bubble); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .msg-row.user .msg-content { background: var(--user-bubble); border: 1px solid rgba(138,180,248,0.15); border-top-right-radius: 4px; }
+  .msg-content p { margin-bottom: 8px; } .msg-content p:last-child { margin-bottom: 0; }
+  .msg-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .msg-content strong { color: var(--fg); font-weight: 600; }
+
+  .msg-content .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; }
+  .msg-content .img-grid img { width: 100%; border-radius: 10px; object-fit: cover; height: 130px; cursor: pointer; transition: transform 0.2s; border: 1px solid var(--border); }
+  .msg-content .img-grid img:hover { transform: scale(1.03); }
+
+  .weather-card { background: linear-gradient(135deg, rgba(0,230,138,0.08), rgba(0,180,216,0.06)); border: 1px solid rgba(0,230,138,0.2); border-radius: 14px; padding: 18px; margin-top: 10px; }
+  .weather-card .temp { font-size: 42px; font-weight: 700; color: var(--accent); }
+  .weather-card .weather-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .weather-card .w-val { font-size: 16px; font-weight: 600; color: var(--fg); }
+  .weather-card .w-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Chat Inline Code Blocks */
+  .code-block { position: relative; margin-top: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #0d1117; }
+  .code-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #161b22; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 11px; transition: all 0.2s; }
+  .copy-btn:hover { background: var(--border); color: var(--fg); }
+  .code-body { padding: 14px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.55; color: #c9d1d9; white-space: pre; max-height: 300px; }
+  
+  .view-panel-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 16px; border-radius: 8px; background: rgba(88,166,255,0.1); color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .view-panel-btn:hover { background: rgba(88,166,255,0.2); border-color: #58a6ff; }
+
+  .typing-dots { display: flex; gap: 5px; padding: 4px 0; }
+  .typing-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: typeBounce 1.4s ease-in-out infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typeBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
+
+  .input-area { padding: 16px 24px 24px; flex-shrink: 0; border-top: 1px solid var(--border); backdrop-filter: blur(20px); background: rgba(10,10,15,0.8); }
+  .input-wrapper { display: flex; align-items: flex-end; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 6px 6px 6px 18px; transition: border-color 0.25s, box-shadow 0.25s; }
+  .input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+  .input-wrapper textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--fg); font-family: 'Space Grotesk', sans-serif; font-size: 15px; resize: none; max-height: 120px; padding: 10px 0; line-height: 1.5; }
+  .input-wrapper textarea::placeholder { color: var(--muted); }
+  .send-btn { width: 42px; height: 42px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), #00b4d8); color: #0a0a0f; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
+  .send-btn:hover { transform: scale(1.08); box-shadow: 0 0 20px var(--accent-glow); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .input-hint { text-align: center; margin-top: 8px; font-size: 11px; color: var(--muted); }
+  .input-hint kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+
+  /* Side Code Panel */
+  .code-panel { position: fixed; top: 0; right: -50vw; width: 50vw; height: 100vh; background: var(--panel-bg); border-left: 1px solid var(--panel-border); z-index: 900; display: flex; flex-direction: column; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .code-panel.open { right: 0; }
+  .panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 899; display: none; }
+  .panel-backdrop.open { display: block; }
+
+  .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: #161b22; flex-shrink: 0; }
+  .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #58a6ff; display: flex; align-items: center; gap: 8px; }
+  .panel-actions { display: flex; gap: 8px; }
+  .panel-btn { padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .panel-btn.run { background: rgba(0,230,138,0.15); color: var(--accent); border-color: rgba(0,230,138,0.3); }
+  .panel-btn.run:hover { background: rgba(0,230,138,0.25); }
+  .panel-btn.close { background: transparent; color: var(--muted); }
+  .panel-btn.close:hover { background: var(--border); color: var(--fg); }
+
+  .panel-body { flex: 1; overflow-y: auto; padding: 0; position: relative; }
+  .panel-code { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #c9d1d9; white-space: pre; min-height: 100%; }
+  .panel-cursor { display: inline-block; width: 8px; height: 16px; background: #58a6ff; animation: cursorBlink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
+  @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .panel-preview { display: none; height: 100%; background: #fff; }
+  .panel-preview.active { display: block; }
+  .panel-preview iframe { width: 100%; height: 100%; border: none; }
+
+  .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+  .toast { padding: 12px 18px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--fg); font-size: 13px; font-family: 'Space Grotesk', sans-serif; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.3s ease-out; display: flex; align-items: center; gap: 8px; }
+  .toast.success { border-color: var(--accent); } .toast.success i { color: var(--accent); }
+  .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+  .lightbox { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; cursor: pointer; }
+  .lightbox.active { display: flex; animation: fadeIn 0.3s; } .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 12px; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-overlay { position: fixed; inset: 0; z-index: 998; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+  .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 28px; max-width: 380px; width: 90%; text-align: center; }
+  .modal-box h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; } .modal-box p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: center; }
+  .modal-actions button { padding: 10px 22px; border-radius: 10px; font-family: inherit; font-size: 14px; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; }
+  .modal-cancel { background: var(--card); color: var(--fg); } .modal-cancel:hover { background: var(--border); }
+  .modal-confirm { background: var(--danger); color: #fff; border-color: var(--danger); } .modal-confirm:hover { background: #ff2244; }
+
+  .settings-panel { position: fixed; top: 0; right: -400px; width: 380px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border); z-index: 950; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); padding: 24px; overflow-y: auto; }
+  .settings-panel.open { right: 0; }
+  .settings-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 949; display: none; } .settings-backdrop.open { display: block; }
+  .settings-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .settings-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; } .settings-group { margin-bottom: 20px; }
+  .settings-input { width: 100%; padding: 12px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--fg); font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  .settings-input:focus { border-color: var(--accent); }
+  .save-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--accent), #00b4d8); color: #0a0a0f; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+  .msg-time { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+  .source-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; margin-top: 8px; }
+  .source-badge.wiki { background: rgba(0,230,138,0.1); color: var(--accent); }
+  .source-badge.weather { background: rgba(0,180,216,0.1); color: #00b4d8; }
+  .source-badge.pexels { background: rgba(168,85,247,0.1); color: #a855f7; }
+  .source-badge.github { background: rgba(88,166,255,0.1); color: #58a6ff; }
+
+  @media (max-width: 900px) {
+    .code-panel { width: 100vw; right: -100vw; }
+    .chat-column.panel-open { margin-right: 0; }
+  }
+  @media (max-width: 640px) {
+    .app-header { padding: 12px 16px; } .chat-area { padding: 16px; } .input-area { padding: 12px 16px 16px; }
+    .msg-content { max-width: 85%; } .quick-actions { grid-template-columns: 1fr; }
+    .welcome-title { font-size: 26px; } .weather-card .weather-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div> <div class="orb orb-1"></div> <div class="orb orb-2"></div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="Full image"></div>
+<div class="modal-overlay" id="confirmModal"><div class="modal-box"><h3 id="modalTitle">Clear Chat?</h3><p id="modalMsg">This will permanently delete all messages.</p><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-confirm" id="modalConfirmBtn">Delete</button></div></div></div>
+<div class="settings-backdrop" id="settingsBackdrop" onclick="toggleSettings()"></div>
+<div class="settings-panel" id="settingsPanel"><div class="settings-title"> Settings <button class="btn-icon" onclick="toggleSettings()"><i class="fas fa-times"></i></button></div><div class="settings-group"><div class="settings-label">Pexels API Key</div><input type="password" class="settings-input" id="pexelsKeyInput" placeholder="Enter your Pexels API key"></div><button class="save-btn" onclick="saveSettings()">Save Settings</button></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Side Code Panel -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closeCodePanel()"></div>
+<div class="code-panel" id="codePanel">
+  <div class="panel-header">
+    <div class="panel-title"><i class="fas fa-code"></i> <span id="panelFileName">code.js</span></div>
+    <div class="panel-actions">
+      <button class="panel-btn run" id="runCodeBtn" onclick="runCode()" style="display:none;"><i class="fas fa-play"></i> Run Code</button>
+      <button class="panel-btn close" onclick="closeCodePanel()"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <div class="panel-code" id="panelCode"><span class="panel-cursor"></span></div>
+    <div class="panel-preview" id="panelPreview"><iframe id="previewIframe" title="Code Preview"></iframe></div>
+  </div>
+</div>
+
+<div class="app-container">
+  <div class="chat-column" id="chatColumn">
+    <header class="app-header">
+      <div class="logo-group"> <div class="logo-icon">Q</div> <div class="logo-text">Quorix<span>AI</span></div> </div>
+      <div class="header-actions">
+        <button class="btn-icon" onclick="toggleSettings()" title="Settings"><i class="fas fa-cog"></i></button>
+        <button class="btn-icon" onclick="confirmClearChat()" title="Clear chat" style="color:var(--danger);"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </header>
+    <main class="chat-area" id="chatArea">
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon"><i class="fas fa-bolt"></i></div>
+        <h1 class="welcome-title">Welcome to Quorix<span>AI</span></h1>
+        <p class="welcome-sub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch real runnable code from GitHub.</p>
+        <div class="quick-actions">
+          <button class="quick-btn" onclick="quickAction('Tell me about the Roman Empire')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
+          <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fab fa-github"></i> Fetch Code</button>
+          <button class="quick-btn" onclick="quickAction('What is the weather right now?')"><i class="fas fa-cloud-sun"></i> Weather</button>
+          <button class="quick-btn" onclick="quickAction('Show me images of mountains')"><i class="fas fa-images"></i> Images</button>
+        </div>
+      </div>
+    </main>
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea id="userInput" rows="1" placeholder="Ask QuorixAI anything..." aria-label="Message input"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
+      </div>
+      <div class="input-hint"><kbd>Enter</kbd> to send &middot; <kbd>Shift+Enter</kbd> for new line</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'quorixai_chat'; const SETTINGS_KEY = 'quorixai_settings';
+  let chatMessages = []; let isProcessing = false; let modalCallback = null;
+  let currentRawCode = ''; // Holds code for the side panel execution
+
+  function init() { loadChat(); loadSettings(); renderChat(); setupTextarea(); }
+  function loadChat() { try { chatMessages = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { chatMessages = []; } }
+  function saveChat() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(chatMessages)); } catch { showToast('Storage full', 'error'); } }
+  function loadSettings() { try { const d = localStorage.getItem(SETTINGS_KEY); if (d) document.getElementById('pexelsKeyInput').value = JSON.parse(d).pexelsKey || ''; } catch {} }
+  function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ pexelsKey: document.getElementById('pexelsKeyInput').value.trim() })); toggleSettings(); showToast('Settings saved', 'success'); }
+  function getPexelsKey() { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)).pexelsKey || ''; } catch { return ''; } }
+
+  function setupTextarea() {
+    const ta = document.getElementById('userInput');
+    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; });
+    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  }
+
+  function renderChat() {
+    const area = document.getElementById('chatArea'); area.querySelectorAll('.msg-row').forEach(el => el.remove());
+    if (chatMessages.length === 0) { document.getElementById('welcomeScreen').style.display = 'flex'; return; }
+    document.getElementById('welcomeScreen').style.display = 'none'; chatMessages.forEach(msg => area.appendChild(createMsgElement(msg))); scrollToBottom();
+  }
+
+  function createMsgElement(msg) {
+    const row = document.createElement('div'); row.className = `msg-row ${msg.role}`;
+    const avatar = document.createElement('div'); avatar.className = 'msg-avatar'; avatar.textContent = msg.role === 'ai' ? 'Q' : 'U';
+    const content = document.createElement('div'); content.className = 'msg-content'; content.innerHTML = msg.html;
+    if (msg.time) { const t = document.createElement('div'); t.className = 'msg-time'; t.textContent = msg.time; content.appendChild(t); }
+    row.appendChild(avatar); row.appendChild(content); return row;
+  }
+
+  function addMessageToDOM(msg) { document.getElementById('welcomeScreen').style.display = 'none'; document.getElementById('chatArea').appendChild(createMsgElement(msg)); scrollToBottom(); }
+  function scrollToBottom() { requestAnimationFrame(() => { document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight; }); }
+  function showTyping() { const area = document.getElementById('chatArea'); const row = document.createElement('div'); row.className = 'msg-row ai'; row.id = 'typingIndicator'; row.innerHTML = `<div class="msg-avatar">Q</div><div class="msg-content"><div class="typing-dots"><span></span><span></span><span></span></div></div>`; area.appendChild(row); scrollToBottom(); }
+  function removeTyping() { const e = document.getElementById('typingIndicator'); if (e) e.remove(); }
+
+  // Fast Chat Streaming
+  async function streamText(element, html, speed = 1) {
+    let output = ''; let inTag = false; let buffer = '';
+    for (let i = 0; i < html.length; i++) {
+      if (html[i] === '<') { inTag = true; output += buffer; buffer = ''; }
+      if (inTag) { output += html[i]; if (html[i] === '>') inTag = false; }
+      else { buffer += html[i]; if (buffer.length >= 6 || i === html.length - 1) { output += buffer; buffer = ''; element.innerHTML = output; await new Promise(r => setTimeout(r, speed)); } }
+    }
+    element.innerHTML = html; bindCopyBtns(element);
+  }
+
+  // Panel Hyper-Speed Streaming
+  async function streamPanelCode(codeText) {
+    const codeEl = document.getElementById('panelCode');
+    codeEl.innerHTML = '<span class="panel-cursor"></span>';
+    let output = '';
+    const chunkSize = 12; // Stream 12 chars at a time for hyper-speed feel
+    for (let i = 0; i < codeText.length; i += chunkSize) {
+      const chunk = codeText.substring(i, Math.min(i + chunkSize, codeText.length));
+      output += chunk;
+      codeEl.innerText = output;
+      codeEl.appendChild(document.createElement('span')).className = 'panel-cursor';
+      codeEl.scrollTop = codeEl.scrollHeight;
+      await new Promise(r => setTimeout(r, 1)); // 1ms delay = lightning speed
+    }
+    codeEl.innerText = codeText; // Final clean render
+    document.getElementById('runCodeBtn').style.display = 'flex'; // Show run button when done
+  }
+
+  function bindCopyBtns(root) {
+    root.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        const codeBlock = btn.closest('.code-block').querySelector('.code-body');
+        navigator.clipboard.writeText(codeBlock.innerText).then(() => { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); });
+      });
+    });
+  }
+
+  async function sendMessage() {
+    if (isProcessing) return; const input = document.getElementById('userInput'); const text = input.value.trim(); if (!text) return;
+    input.value = ''; input.style.height = 'auto'; const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userMsg = { role: 'user', html: escapeHTML(text), time: timeStr }; chatMessages.push(userMsg); addMessageToDOM(userMsg); saveChat();
+    isProcessing = true; document.getElementById('sendBtn').disabled = true; showTyping();
+
+    try {
+      const intent = detectIntent(text); let html = '';
+      switch (intent.type) {
+        case 'weather': html = await handleWeather(); break;
+        case 'images': html = await handleImages(intent.query); break;
+        case 'github': html = await handleGithub(intent.query); break;
+        case 'wiki': default: html = await handleWiki(intent.query || text); break;
+      }
+      const aiMsg = { role: 'ai', html, time: timeStr }; chatMessages.push(aiMsg); removeTyping();
+      const msgEl = createMsgElement({ ...aiMsg, html: '' }); document.getElementById('chatArea').appendChild(msgEl);
+      await streamText(msgEl.querySelector('.msg-content'), html); saveChat();
+    } catch (err) {
+      removeTyping(); const errMsg = { role: 'ai', html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>`, time: timeStr };
+      chatMessages.push(errMsg); addMessageToDOM(errMsg); saveChat();
+    }
+    isProcessing = false; document.getElementById('sendBtn').disabled = false;
+  }
+
+  function quickAction(text) { document.getElementById('userInput').value = text; sendMessage(); }
+
+  function detectIntent(text) {
+    const lower = text.toLowerCase();
+    if (/\b(weather|temperature|forecast)\b/i.test(lower)) return { type: 'weather' };
+    const imgMatch = lower.match(/(?:show|find|get)\s+(?:me\s+)?(?:images?|photos?|pictures?)\s+(?:of\s+)?(.+)/i);
+    if (imgMatch) return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
+    const ghMatch = lower.match(/(?:can you |please )?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
+    if (ghMatch) return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
+    const wikiQuery = lower.replace(/\b(tell\s+me\s+about|who\s+is|what\s+is|explain|describe|about)\b/gi, '').trim();
+    return { type: 'wiki', query: wikiQuery || text };
+  }
+
+  async function handleWiki(query) {
+    const searchData = await (await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`)).json();
+    if (!searchData.query?.search?.length) return `<p>No results for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge wiki"><i class="fab fa-wikipedia-w"></i> Wikipedia</div>`;
+    const pageId = searchData.query.search[0].pageid; const title = searchData.query.search[0].title;
+    const extractData = await (await fetch(`https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`)).json();
+    let extract = extractData.query.pages[pageId].extract || 'No extract available.';
+    if (extract.length > 600) { extract = extract.substring(0, 600); const lp = extract.lastIndexOf('.'); extract = (lp > 300 ? extract.substring(0, lp + 1) : extract) + '...'; }
+    return `<p><strong>${escapeHTML(title)}</strong></p><p>${escapeHTML(extract)}</p><div class="source-badge wiki"><i class="fab fa-wikipedia-w"></i> Wikipedia</div>`;
+  }
+
+  async function handleImages(query) {
+    const apiKey = getPexelsKey();
+    if (!apiKey) return `<p>Add a Pexels API key in <strong>Settings</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
+    const data = await (await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6`, { headers: { Authorization: apiKey } })).json();
+    if (!data.photos?.length) return `<p>No images for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
+    let html = `<p>Images for <strong>${escapeHTML(query)}</strong>:</p><div class="img-grid">`;
+    data.photos.forEach(p => { html += `<img src="${p.src.medium}" alt="${escapeHTML(p.alt || query)}" onclick="openLightbox('${p.src.large2x}')" loading="lazy">`; });
+    return html + `</div><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
+  }
+
+  async function handleWeather() {
+    let lat, lon, cityName = 'your location';
+    try { const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 })); lat = pos.coords.latitude; lon = pos.coords.longitude; }
+    catch { return `<p><strong>Location access denied.</strong></p><div class="source-badge weather"><i class="fas fa-cloud-sun"></i> Open-Meteo</div>`; }
+    try { const geo = await (await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10`)).json(); if (geo.address) cityName = geo.address.city || geo.address.town || geo.address.county || cityName; } catch {}
+    const data = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,surface_pressure&temperature_unit=celsius&timezone=auto`)).json();
+    const c = data.current;
+    return `<p><strong>Weather in ${escapeHTML(cityName)}</strong></p><div class="weather-card"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:48px;">${weatherCodeToIcon(c.weather_code)}</div><div><div class="temp">${Math.round(c.temperature_2m)}&deg;C</div><div style="color:var(--muted);font-size:13px;">${weatherCodeToText(c.weather_code)}</div></div></div><div class="weather-grid"><div class="w-item"><div class="w-val">${c.relative_humidity_2m}%</div><div class="w-label">Humidity</div></div><div class="w-item"><div class="w-val">${c.wind_speed_10m}km/h</div><div class="w-label">Wind</div></div><div class="w-item"><div class="w-val">${Math.round(c.surface_pressure)}hPa</div><div class="w-label">Pressure</div></div></div></div><div class="source-badge weather"><i class="fas fa-cloud-sun"></i> Open-Meteo</div>`;
+  }
+
+  async function handleGithub(query) {
+    const repoData = await (await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=1`)).json();
+    if (!repoData.items?.length) return `<p>No GitHub repositories found for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
+    
+    const repo = repoData.items[0];
+    const repoInfo = await (await fetch(repo.url)).json();
+    const branch = repoInfo.default_branch;
+    const treeData = await (await fetch(`https://api.github.com/repos/${repo.full_name}/git/trees/${branch}?recursive=1`)).json();
+
+    const mainFiles = treeData.tree.filter(f => f.type === 'blob' && /\.(html|js|css|py|ts|jsx|tsx)$/i.test(f.path) && !/node_modules|vendor|dist|build/i.test(f.path))
+      .sort((a, b) => a.path.split('/').length - b.path.split('/').length).slice(0, 2);
+
+    if (!mainFiles.length) return `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but no source code detected.</p><div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
+
+    let chatHtml = `<p>Pulled code from <strong>${escapeHTML(repo.full_name)}</strong>:</p>`;
+    let panelFileContent = '';
+    let panelFileName = '';
+
+    for (const file of mainFiles) {
+      try {
+        const fileData = await (await fetch(file.url)).json();
+        const content = atob(fileData.content.replace(/\n/g, ''));
+        const ext = file.path.split('.').pop().toLowerCase();
+        const langMap = { js: 'javascript', jsx: 'javascript', ts: 'typescript', tsx: 'typescript', py: 'python', html: 'html', css: 'css' };
+        
+        const isLong = content.length > 500;
+        const displayContent = isLong ? content.substring(0, 300) + '\n// ... (Open in Panel to see full code)' : content;
+        const cid = 'code-' + Math.random().toString(36).substr(2, 9);
+
+        chatHtml += `<div class="code-block">
+          <div class="code-header"><span>${escapeHTML(file.path)}</span><button class="copy-btn" data-cid="${cid}">Copy</button></div>
+          <pre class="code-body" id="${cid}">${escapeHTML(displayContent)}</pre>
+        </div>`;
+
+        if (isLong && !panelFileContent) { // Put the first long file in the panel
+          panelFileContent = content;
+          panelFileName = file.path;
+        }
+      } catch {}
+    }
+
+    // If there's a long file, add the button to open the side panel
+    if (panelFileContent) {
+      const pid = 'panel-' + Math.random().toString(36).substr(2, 9);
+      chatHtml += `<button class="view-panel-btn" onclick="openCodePanel('${pid}')"><i class="fas fa-expand"></i> View Full Code & Run</button>`;
+      // Temporarily store code in window scope for the button to grab
+      window[`quorix_code_${pid}`] = { content: panelFileContent, name: panelFileName };
+    }
+
+    chatHtml += `<div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
+    return chatHtml;
+  }
+
+  // Panel Logic
+  function openCodePanel(id) {
+    const data = window[`quorix_code_${id}`];
+    if (!data) return;
+    currentRawCode = data.content;
+    document.getElementById('panelFileName').textContent = data.name;
+    document.getElementById('runCodeBtn').style.display = 'none'; // Hide until streaming finishes
+    document.getElementById('panelPreview').classList.remove('active');
+    document.getElementById('panelCode').style.display = 'block';
+    
+    document.getElementById('codePanel').classList.add('open');
+    document.getElementById('panelBackdrop').classList.add('open');
+    document.getElementById('chatColumn').classList.add('panel-open');
+    
+    streamPanelCode(data.content);
+  }
+
+  function closeCodePanel() {
+    document.getElementById('codePanel').classList.remove('open');
+    document.getElementById('panelBackdrop').classList.remove('open');
+    document.getElementById('chatColumn').classList.remove('panel-open');
+  }
+
+  function runCode() {
+    const preview = document.getElementById('panelPreview');
+    const iframe = document.getElementById('previewIframe');
+    
+    document.getElementById('panelCode').style.display = 'none';
+    preview.classList.add('active');
+
+    // Wrap in basic HTML if it's JS/CSS, run raw if HTML
+    let htmlContent = currentRawCode;
+    if (!/<html/i.test(htmlContent)) {
+       htmlContent = `<!DOCTYPE html><html><head><style>body{margin:0;font-family:sans-serif;background:#111;color:#eee;padding:20px;}</style></head><body><script>${currentRawCode}<\/script></body></html>`;
+    }
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    iframe.src = URL.createObjectURL(blob);
+    showToast('Code executed successfully', 'success');
+  }
+
+  function weatherCodeToText(code) { const m = { 0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',51:'Light drizzle',61:'Slight rain',63:'Moderate rain',71:'Slight snow',80:'Rain showers',95:'Thunderstorm'}; return m[code]||'Unknown'; }
+  function weatherCodeToIcon(code) { if (code===0) return '☀️'; if (code<=2) return '⛅'; if (code===3) return '☁️'; if (code<=48) return '🌫️'; if (code<=65) return '🌧️'; if (code<=77) return '🌨️'; if (code>=95) return '⛈️'; return '🌤️'; }
+  
+  function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+  function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('active'); }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCodePanel(); } });
+
+  function showToast(msg, type = 'success') { const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`; document.getElementById('toastContainer').appendChild(t); setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(30px)'; t.style.transition='all 0.3s'; setTimeout(() => t.remove(), 300); }, 3000); }
+  function confirmClearChat() { if (chatMessages.length === 0) return; document.getElementById('modalTitle').textContent = 'Clear Chat?'; document.getElementById('modalMsg').textContent = 'Delete all messages?'; modalCallback = () => { chatMessages = []; saveChat(); renderChat(); showToast('Chat cleared', 'success'); }; document.getElementById('confirmModal').classList.add('active'); }
+  function closeModal() { document.getElementById('confirmModal').classList.remove('active'); modalCallback = null; }
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => { if (modalCallback) modalCallback(); closeModal(); });
+  function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); document.getElementById('settingsBackdrop').classList.toggle('open'); }
+
+  init();
+</script>
+</body>
+</html>
