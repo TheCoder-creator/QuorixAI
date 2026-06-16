@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><script>window.__V0_SANDBOX_ID__="sb-5l92ea2cvdyy";window.__V0_CHAT_ID__="dVLs40k4vOC";window.__V0_SOURCE_MAP_FRAME_ROOT__="file:///vercel/share/v0-project/.next/dev/static";;(function up(e){let t=Symbol.for("__next_dev_bridge_runtime_observer__"),r=window[t],n=e||{},i=n.messageType||"next-dev-bridge:runtime",a=n.readyMessageType||"next-dev-bridge:runtime-ready",s=n.resetMessageType||"next-dev-bridge:runtime-reset",o=n.targetOrigin||"*",u=!1!==n.isAppDirectory,l="string"==typeof n.sourceMapEndpoint&&n.sourceMapEndpoint?n.sourceMapEndpoint:"",c="string"==typeof n.sourceMapFrameRoot&&n.sourceMapFrameRoot?n.sourceMapFrameRoot.replace(/\/+$/,""):"";if(r)return void f(a,{existing:!0,href:window.location.href,windowId:r.windowId});let d=1,p=`${Date.now()}-${Math.random().toString(36).slice(2)}`,h={errors:[]};function f(e,t){window.parent!==window&&window.parent.postMessage({type:e,...t},o)}async function m(e){let t={...e,id:d++,severity:"recoverable",at:new Date().toISOString()};h.errors=[...h.errors,t],f(i,{event:{type:"runtime:error",error:t,errors:h.errors},state:h,href:window.location.href,windowId:p}),l&&w(t).then(e=>{h.errors.some(e=>e.id===t.id)&&(t.mapped=e,h.errors=h.errors.map(e=>e.id===t.id?t:e),f(i,{event:{type:"runtime:error",error:t,errors:h.errors},state:h,href:window.location.href,windowId:p}))}).catch(()=>{})}function g(){0!==h.errors.length&&(h.errors=[],f(i,{event:{type:"runtime:cleared",errors:[]},state:h,href:window.location.href,windowId:p}))}function v(e){var t,r,n,i,a;let s,o,u,l;m((s=_((t=e).error,t.message||"Uncaught error"),o=t.filename||void 0,u=U(t.lineno),l=U(t.colno),{source:"error",name:s.name,message:s.message,stack:s.stack||(r=s.message,n=o,i=u,a=l,n&&i&&a?`${r}
+    at <anonymous> (${n}:${i}:${a})`:""),filename:o,line:u,column:l}))}function y(e){let t;m({source:"unhandledrejection",name:(t=_(e.reason,"Unhandled promise rejection")).name,message:t.message,stack:t.stack})}function b(e){let t=e.data;t&&"object"==typeof t&&t.type===s&&g()}function _(e,t){return e instanceof Error?{name:e.name||"Error",message:e.message||t,stack:e.stack||""}:e&&"object"==typeof e?{name:"string"==typeof e.name?e.name:"Error",message:"string"==typeof e.message?e.message:function(e){try{return JSON.stringify(e)}catch{return""}}(e)||t,stack:"string"==typeof e.stack?e.stack:""}:{name:"Error",message:"string"==typeof e?e:null==e?t:String(e),stack:""}}async function w(e){var t,r;let n=(t=String(e.stack).split("\n").map(j).filter(Boolean),r=e.filename,t.map(e=>({...e,file:function(e,t){var r,n;if("string"!=typeof e||0===e.length)return;let i=A(e);if(i)return O(i);if(r=e,/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(r))return e;if(t&&N(t)===N(e)){let e=A(t);return e?O(e):t}let a=e.startsWith("_next/")?`/${e}`:e;return a.startsWith("/_next/")?O(a):!(n=a).includes("/")&&n.endsWith(".js")&&(n.startsWith("_")||n.includes("._.")||n.startsWith("node_modules_")||n.startsWith("turbopack-"))?O(`/_next/static/chunks/${a}`):e}(e.file,r)})));return{message:e.message,stack:e.stack,frames:n,mappedFrames:n.length>0?await x(n):[]}}async function x(e){let t=function(e){let t=[],r=new Set;for(let n of(k(t,r,e),[R,I,P])){let i=function(e,t){let r=!1,n=e.map(e=>{if("string"!=typeof e.file)return e;let n=t(e.file);return n&&n!==e.file?(r=!0,{...e,file:n}):e});return r?n:null}(e,n);i&&k(t,r,i)}return t}(e),r=null;for(let n of t){let t=await E(n);if(function(e){for(let n of e){var t,r;let e=D(t=n)&&"fulfilled"===t.status&&D(t.value)&&D(t.value.originalStackFrame)?t.value.originalStackFrame:null;if(!e||!0===e.ignored)continue;let i="string"!=typeof(r=e.file)?"":r.trim();if(!(!i||function(e){let t=C(e);return/\/(?:_next\/static|\.next\/dev\/static)\/chunks\//.test(t)||t.includes("/next/dist/compiled/")}(i)))return!0}return!1}(t.mappedFrames))return S(e,t.mappedFrames);if(r=t.mappedFrames,!t.shouldTryNextVariant)break}return r??$(e,"No stack frames to map.")}async function E(e){try{let t=function(e){try{return new URL(e,window.location.href).origin!==window.location.origin}catch{return!1}}(l),r={body:JSON.stringify({frames:e,isServer:!1,isEdgeServer:!1,isAppDirectory:u,sourceOrigin:window.location.origin}),cache:"no-store",credentials:t?"omit":"same-origin",method:"POST",mode:t?"cors":"same-origin"};t||(r.headers={"content-type":"application/json"});let n=await fetch(l,{...r});if(!n.ok||204===n.status){let t=await n.text().catch(()=>"");return{mappedFrames:$(e,t||"No original stack frame response from Next dev server."),shouldTryNextVariant:!1}}let i=await n.json();if(!Array.isArray(i))return{mappedFrames:$(e,"Invalid original stack frame response from Next dev server."),shouldTryNextVariant:!1};return{mappedFrames:S(e,i),shouldTryNextVariant:!0}}catch(t){return{mappedFrames:$(e,t instanceof Error?t.message:String(t)),shouldTryNextVariant:!1}}}function S(e,t){return e.map((e,r)=>t[r]||{status:"rejected",reason:"No original stack frame response for frame."})}function $(e,t){return e.map(()=>({status:"rejected",reason:t}))}function k(e,t,r){let n=JSON.stringify(r.map(e=>e.file));t.has(n)||(t.add(n),e.push(r))}function O(e){return c?`${c}/${e.replace(/^\/_next\/static\/?/,"")}`:e}function R(e){let t=T(e);return t?`.next/dev/static/${t.replace(/^\/_next\/static\/?/,"")}`:null}function I(e){let t=T(e);return t?t.replace(/^\/+/,""):null}function P(e){let t=T(e);if(!t)return null;try{return new URL(t,window.location.origin).href}catch{return null}}function T(e){var t,r;let n,i=C(e);if(i.startsWith("/_next/static/"))return i;let a=(r="/.next/dev/static/",-1===(n=(t=i).indexOf(r))?"":t.slice(n+r.length));return a?`/_next/static/${a}`:""}function A(e){if(e.startsWith("/_next/"))return e;if(e.startsWith("_next/"))return`/${e}`;try{let t=new URL(e);return t.pathname.startsWith("/_next/")?t.pathname:""}catch{return""}}function C(e){try{return new URL(e).pathname}catch{}return e.startsWith("/")?e:`/${e}`}function N(e){return e.split("?")[0].split(/[\\/]/).pop()||e}function D(e){return"object"==typeof e&&null!==e}function j(e){let t=e.trim();if(!t.startsWith("at "))return null;let r=t.slice(3),n="<anonymous>",i=r,a=r.indexOf("("),s=r.endsWith(")")?r.length-1:-1;-1!==a&&-1!==s&&s>a&&(n=r.slice(0,a).trim()||"<anonymous>",i=r.slice(a+1,s));let o=/^(.*):(\d+):(\d+)$/.exec(i);return o?{file:o[1],methodName:n,arguments:[],line1:Number(o[2]),column1:Number(o[3])}:null}function U(e){return"number"==typeof e&&Number.isFinite(e)&&e>0?e:void 0}window.addEventListener("error",v),window.addEventListener("unhandledrejection",y),window.addEventListener("message",b),window[t]={windowId:p,getSnapshot:()=>({errors:h.errors.slice()}),reset:g,stop:function(){window.removeEventListener("error",v),window.removeEventListener("unhandledrejection",y),window.removeEventListener("message",b),delete window[t]}},f(a,{existing:!1,href:window.location.href,windowId:p})})({"messageType":"next-dev-bridge:event","sourceMapEndpoint":"/_v0/next-dev-bridge-stack-frames","sourceMapFrameRoot":"file:///vercel/share/v0-project/.next/dev/static"});</script><script async src="/v0-runtime-dist.js"></script><style>nextjs-portal{display: none !important}</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuorixAI</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -13,21 +13,36 @@
     --bg: #0a0a0f; --bg-secondary: #12121a; --card: #1a1a28; --border: #2a2a3e;
     --fg: #e8e6f0; --muted: #7a7890; --accent: #00e68a; --accent-dim: rgba(0,230,138,0.12);
     --accent-glow: rgba(0,230,138,0.25); --user-bubble: #1e2a3a; --ai-bubble: #1a1a28; --danger: #ff4466;
-    --panel-bg: #0d1117; --panel-border: #1b2230;
+    --panel-bg: #0d1117; --panel-border: #1b2230; --sidebar-bg: #08080c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--fg); height: 100vh; overflow: hidden; }
-  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
   .bg-mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse 600px 400px at 15% 20%, rgba(0,230,138,0.06) 0%, transparent 70%), radial-gradient(ellipse 500px 500px at 85% 75%, rgba(0,180,230,0.04) 0%, transparent 70%); }
-  .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: orbFloat 20s ease-in-out infinite alternate; }
-  .orb-1 { width: 300px; height: 300px; top: 10%; left: 5%; background: rgba(0,230,138,0.07); }
-  .orb-2 { width: 250px; height: 250px; bottom: 15%; right: 10%; background: rgba(0,180,240,0.05); animation-delay: -7s; animation-duration: 25s; }
-  @keyframes orbFloat { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -40px) scale(1.1); } 100% { transform: translate(10px, -10px) scale(1.05); } }
 
-  .app-container { position: relative; z-index: 1; display: flex; height: 100vh; width: 100vw; }
+  .app-layout { position: relative; z-index: 1; display: flex; height: 100vh; width: 100vw; }
+
+  /* Sidebar is now a slide-in drawer on ALL screen sizes, opened via the Chats button */
+  .session-sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 60; }
+  .session-sidebar.open { transform: translateX(0); }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-title { font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-header-actions { display: flex; gap: 8px; }
+  .new-chat-btn { background: var(--accent); color: #000; border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform 0.2s, box-shadow 0.2s; }
+  .new-chat-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-glow); }
+  .close-sidebar-btn { background: var(--card); color: var(--muted); border: 1px solid var(--border); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.2s; }
+  .close-sidebar-btn:hover { background: var(--border); color: var(--fg); }
+  .session-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .session-empty { padding: 24px 12px; text-align: center; color: var(--muted); font-size: 13px; }
+  .session-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; border: 1px solid transparent; }
+  .session-item:hover { background: var(--card); color: var(--fg); }
+  .session-item.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(0,230,138,0.2); }
+  .session-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; pointer-events: none; }
+  .del-session { background: none; border: none; color: var(--danger); cursor: pointer; opacity: 0; font-size: 12px; transition: opacity 0.2s; padding: 0 4px; }
+  .session-item:hover .del-session { opacity: 1; }
+
   .chat-column { flex: 1; display: flex; flex-direction: column; min-width: 0; transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
   .chat-column.panel-open { margin-right: 50vw; }
 
@@ -35,16 +50,19 @@
   .logo-group { display: flex; align-items: center; gap: 12px; }
   .logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), #00b4d8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #0a0a0f; box-shadow: 0 0 20px var(--accent-glow); }
   .logo-text { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; } .logo-text span { color: var(--accent); }
-  .header-actions { display: flex; gap: 8px; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
   .btn-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 14px; }
   .btn-icon:hover { background: var(--border); color: var(--fg); }
+  .chats-btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--fg); cursor: pointer; transition: all 0.2s; font-family: inherit; font-size: 13px; font-weight: 600; }
+  .chats-btn:hover { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
 
   .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
   .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 24px; padding: 40px; }
-  .welcome-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--accent), #00b4d8); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #0a0a0f; box-shadow: 0 0 40px var(--accent-glow); }
-  .welcome-title { font-size: 32px; font-weight: 700; letter-spacing: -1px; } .welcome-title span { color: var(--accent); }
+  .welcome-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--accent), #00b4d8); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #0a0a0f; box-shadow: 0 0 40px var(--accent-glow); animation: welcomePulse 3s ease-in-out infinite; }
+  @keyframes welcomePulse { 0%, 100% { box-shadow: 0 0 40px var(--accent-glow); } 50% { box-shadow: 0 0 60px var(--accent-glow), 0 0 80px rgba(0,230,138,0.1); } }
+  .welcome-title { font-size: 32px; font-weight: 700; } .welcome-title span { color: var(--accent); }
   .welcome-sub { color: var(--muted); font-size: 16px; max-width: 440px; line-height: 1.6; }
-  .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 500px; width: 100%; margin-top: 8px; }
+  .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 500px; width: 100%; }
   .quick-btn { padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); color: var(--fg); cursor: pointer; text-align: left; transition: all 0.25s; font-family: inherit; font-size: 13px; display: flex; align-items: center; gap: 10px; }
   .quick-btn:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-2px); }
   .quick-btn i { color: var(--accent); font-size: 16px; width: 20px; text-align: center; }
@@ -58,12 +76,11 @@
   .msg-row.ai .msg-content { background: var(--ai-bubble); border: 1px solid var(--border); border-top-left-radius: 4px; }
   .msg-row.user .msg-content { background: var(--user-bubble); border: 1px solid rgba(138,180,248,0.15); border-top-right-radius: 4px; }
   .msg-content p { margin-bottom: 8px; } .msg-content p:last-child { margin-bottom: 0; }
-  .msg-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
   .msg-content strong { color: var(--fg); font-weight: 600; }
 
-  .msg-content .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; }
-  .msg-content .img-grid img { width: 100%; border-radius: 10px; object-fit: cover; height: 130px; cursor: pointer; transition: transform 0.2s; border: 1px solid var(--border); }
-  .msg-content .img-grid img:hover { transform: scale(1.03); }
+  .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; }
+  .img-grid img { width: 100%; border-radius: 10px; object-fit: cover; height: 130px; cursor: pointer; border: 1px solid var(--border); transition: transform 0.2s; }
+  .img-grid img:hover { transform: scale(1.03); }
 
   .weather-card { background: linear-gradient(135deg, rgba(0,230,138,0.08), rgba(0,180,216,0.06)); border: 1px solid rgba(0,230,138,0.2); border-radius: 14px; padding: 18px; margin-top: 10px; }
   .weather-card .temp { font-size: 42px; font-weight: 700; color: var(--accent); }
@@ -71,13 +88,6 @@
   .weather-card .w-val { font-size: 16px; font-weight: 600; color: var(--fg); }
   .weather-card .w-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  /* Chat Inline Code Blocks */
-  .code-block { position: relative; margin-top: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #0d1117; }
-  .code-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #161b22; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
-  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 11px; transition: all 0.2s; }
-  .copy-btn:hover { background: var(--border); color: var(--fg); }
-  .code-body { padding: 14px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.55; color: #c9d1d9; white-space: pre; max-height: 300px; }
-  
   .view-panel-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 16px; border-radius: 8px; background: rgba(88,166,255,0.1); color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.2s; }
   .view-panel-btn:hover { background: rgba(88,166,255,0.2); border-color: #58a6ff; }
 
@@ -94,45 +104,36 @@
   .send-btn { width: 42px; height: 42px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), #00b4d8); color: #0a0a0f; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
   .send-btn:hover { transform: scale(1.08); box-shadow: 0 0 20px var(--accent-glow); }
   .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-  .input-hint { text-align: center; margin-top: 8px; font-size: 11px; color: var(--muted); }
-  .input-hint kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
 
-  /* Side Code Panel */
   .code-panel { position: fixed; top: 0; right: -50vw; width: 50vw; height: 100vh; background: var(--panel-bg); border-left: 1px solid var(--panel-border); z-index: 900; display: flex; flex-direction: column; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
   .code-panel.open { right: 0; }
-  .panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 899; display: none; }
-  .panel-backdrop.open { display: block; }
-
   .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: #161b22; flex-shrink: 0; }
-  .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #58a6ff; display: flex; align-items: center; gap: 8px; }
-  .panel-actions { display: flex; gap: 8px; }
+  .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #58a6ff; display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .panel-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .panel-btn { padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
   .panel-btn.run { background: rgba(0,230,138,0.15); color: var(--accent); border-color: rgba(0,230,138,0.3); }
   .panel-btn.run:hover { background: rgba(0,230,138,0.25); }
+  .panel-btn.copy { background: rgba(88,166,255,0.1); color: #58a6ff; border-color: rgba(88,166,255,0.2); }
+  .panel-btn.copy:hover { background: rgba(88,166,255,0.2); }
   .panel-btn.close { background: transparent; color: var(--muted); }
   .panel-btn.close:hover { background: var(--border); color: var(--fg); }
-
-  .panel-body { flex: 1; overflow-y: auto; padding: 0; position: relative; }
+  .panel-body { flex: 1; overflow-y: auto; position: relative; }
   .panel-code { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #c9d1d9; white-space: pre; min-height: 100%; }
-  .panel-cursor { display: inline-block; width: 8px; height: 16px; background: #58a6ff; animation: cursorBlink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
-  @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
   .panel-preview { display: none; height: 100%; background: #fff; }
   .panel-preview.active { display: block; }
   .panel-preview iframe { width: 100%; height: 100%; border: none; }
 
   .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
-  .toast { padding: 12px 18px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--fg); font-size: 13px; font-family: 'Space Grotesk', sans-serif; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.3s ease-out; display: flex; align-items: center; gap: 8px; }
+  .toast { padding: 12px 18px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--fg); font-size: 13px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.3s ease-out; display: flex; align-items: center; gap: 8px; }
   .toast.success { border-color: var(--accent); } .toast.success i { color: var(--accent); }
   .toast.error { border-color: var(--danger); } .toast.error i { color: var(--danger); }
   @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
   .lightbox { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; cursor: pointer; }
-  .lightbox.active { display: flex; animation: fadeIn 0.3s; } .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 12px; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .lightbox.active { display: flex; } .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 12px; }
 
   .modal-overlay { position: fixed; inset: 0; z-index: 998; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; }
-  .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+  .modal-overlay.active { display: flex; }
   .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 28px; max-width: 380px; width: 90%; text-align: center; }
   .modal-box h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; } .modal-box p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
   .modal-actions { display: flex; gap: 10px; justify-content: center; }
@@ -140,77 +141,78 @@
   .modal-cancel { background: var(--card); color: var(--fg); } .modal-cancel:hover { background: var(--border); }
   .modal-confirm { background: var(--danger); color: #fff; border-color: var(--danger); } .modal-confirm:hover { background: #ff2244; }
 
-  .settings-panel { position: fixed; top: 0; right: -400px; width: 380px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border); z-index: 950; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); padding: 24px; overflow-y: auto; }
-  .settings-panel.open { right: 0; }
-  .settings-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 949; display: none; } .settings-backdrop.open { display: block; }
-  .settings-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
-  .settings-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; } .settings-group { margin-bottom: 20px; }
-  .settings-input { width: 100%; padding: 12px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--fg); font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; transition: border-color 0.2s; }
-  .settings-input:focus { border-color: var(--accent); }
-  .save-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--accent), #00b4d8); color: #0a0a0f; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
-
   .msg-time { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
-  .source-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; margin-top: 8px; }
-  .source-badge.wiki { background: rgba(0,230,138,0.1); color: var(--accent); }
-  .source-badge.weather { background: rgba(0,180,216,0.1); color: #00b4d8; }
-  .source-badge.pexels { background: rgba(168,85,247,0.1); color: #a855f7; }
-  .source-badge.github { background: rgba(88,166,255,0.1); color: #58a6ff; }
+
+  .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+  .sidebar-backdrop.active { display: block; }
 
   @media (max-width: 900px) {
+    .session-sidebar { width: 85%; max-width: 320px; }
     .code-panel { width: 100vw; right: -100vw; }
     .chat-column.panel-open { margin-right: 0; }
-  }
-  @media (max-width: 640px) {
-    .app-header { padding: 12px 16px; } .chat-area { padding: 16px; } .input-area { padding: 12px 16px 16px; }
-    .msg-content { max-width: 85%; } .quick-actions { grid-template-columns: 1fr; }
-    .welcome-title { font-size: 26px; } .weather-card .weather-grid { grid-template-columns: repeat(2, 1fr); }
+    .chats-btn span { display: none; }
+    .chats-btn { padding: 0; width: 38px; justify-content: center; }
   }
 </style>
 </head>
 <body>
 
-<div class="bg-mesh"></div> <div class="orb orb-1"></div> <div class="orb orb-2"></div>
+<div class="bg-mesh"></div>
 
-<div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="Full image"></div>
-<div class="modal-overlay" id="confirmModal"><div class="modal-box"><h3 id="modalTitle">Clear Chat?</h3><p id="modalMsg">This will permanently delete all messages.</p><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-confirm" id="modalConfirmBtn">Delete</button></div></div></div>
-<div class="settings-backdrop" id="settingsBackdrop" onclick="toggleSettings()"></div>
-<div class="settings-panel" id="settingsPanel"><div class="settings-title"> Settings <button class="btn-icon" onclick="toggleSettings()"><i class="fas fa-times"></i></button></div><div class="settings-group"><div class="settings-label">Pexels API Key</div><input type="password" class="settings-input" id="pexelsKeyInput" placeholder="Enter your Pexels API key"></div><button class="save-btn" onclick="saveSettings()">Save Settings</button></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="Image"></div>
+<div class="modal-overlay" id="confirmModal"><div class="modal-box"><h3 id="modalTitle">Clear?</h3><p id="modalMsg">Are you sure?</p><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 <div class="toast-container" id="toastContainer"></div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-<!-- Side Code Panel -->
-<div class="panel-backdrop" id="panelBackdrop" onclick="closeCodePanel()"></div>
+<!-- Code Panel -->
 <div class="code-panel" id="codePanel">
   <div class="panel-header">
-    <div class="panel-title"><i class="fas fa-code"></i> <span id="panelFileName">code.js</span></div>
+    <div class="panel-title"><i class="fas fa-code"></i> <span id="panelFileName">index.html</span></div>
     <div class="panel-actions">
+      <button class="panel-btn copy" id="panelCopyBtn" onclick="copyPanelCode()"><i class="fas fa-copy"></i> Copy</button>
       <button class="panel-btn run" id="runCodeBtn" onclick="runCode()" style="display:none;"><i class="fas fa-play"></i> Run Code</button>
       <button class="panel-btn close" onclick="closeCodePanel()"><i class="fas fa-times"></i></button>
     </div>
   </div>
   <div class="panel-body" id="panelBody">
-    <div class="panel-code" id="panelCode"><span class="panel-cursor"></span></div>
-    <div class="panel-preview" id="panelPreview"><iframe id="previewIframe" title="Code Preview"></iframe></div>
+    <div class="panel-code" id="panelCode"></div>
+    <div class="panel-preview" id="panelPreview"><iframe id="previewIframe" title="Preview"></iframe></div>
   </div>
 </div>
 
-<div class="app-container">
+<!-- Sidebar (Chats drawer) -->
+<aside class="session-sidebar" id="sessionSidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">Saved Chats</div>
+    <div class="sidebar-header-actions">
+      <button class="new-chat-btn" onclick="createNewSession()" title="New Chat"><i class="fas fa-plus"></i></button>
+      <button class="close-sidebar-btn" onclick="closeSidebar()" title="Close"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+  <div class="session-list" id="sessionList"></div>
+</aside>
+
+<!-- App Layout -->
+<div class="app-layout">
   <div class="chat-column" id="chatColumn">
     <header class="app-header">
-      <div class="logo-group"> <div class="logo-icon">Q</div> <div class="logo-text">Quorix<span>AI</span></div> </div>
+      <div class="logo-group">
+        <div class="logo-icon">Q</div>
+        <div class="logo-text">Quorix<span>AI</span></div>
+      </div>
       <div class="header-actions">
-        <button class="btn-icon" onclick="toggleSettings()" title="Settings"><i class="fas fa-cog"></i></button>
-        <button class="btn-icon" onclick="confirmClearChat()" title="Clear chat" style="color:var(--danger);"><i class="fas fa-trash-alt"></i></button>
+        <button class="chats-btn" onclick="toggleSidebar()" title="View saved chats"><i class="fas fa-comments"></i> <span>Chats</span></button>
+        <button class="btn-icon" onclick="confirmClearChat()" title="Clear current chat"><i class="fas fa-trash-alt" style="color:var(--danger);"></i></button>
       </div>
     </header>
     <main class="chat-area" id="chatArea">
       <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-icon"><i class="fas fa-bolt"></i></div>
         <h1 class="welcome-title">Welcome to Quorix<span>AI</span></h1>
-        <p class="welcome-sub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch real runnable code from GitHub.</p>
+        <p class="welcome-sub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.</p>
         <div class="quick-actions">
           <button class="quick-btn" onclick="quickAction('Tell me about the Roman Empire')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
-          <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fab fa-github"></i> Fetch Code</button>
+          <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fas fa-code"></i> Build Code</button>
           <button class="quick-btn" onclick="quickAction('What is the weather right now?')"><i class="fas fa-cloud-sun"></i> Weather</button>
           <button class="quick-btn" onclick="quickAction('Show me images of mountains')"><i class="fas fa-images"></i> Images</button>
         </div>
@@ -219,263 +221,819 @@
     <div class="input-area">
       <div class="input-wrapper">
         <textarea id="userInput" rows="1" placeholder="Ask QuorixAI anything..." aria-label="Message input"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
+        <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
       </div>
-      <div class="input-hint"><kbd>Enter</kbd> to send &middot; <kbd>Shift+Enter</kbd> for new line</div>
     </div>
   </div>
 </div>
 
 <script>
-  const STORAGE_KEY = 'quorixai_chat'; const SETTINGS_KEY = 'quorixai_settings';
-  let chatMessages = []; let isProcessing = false; let modalCallback = null;
-  let currentRawCode = ''; // Holds code for the side panel execution
+  /* ============================================
+     STORAGE KEYS & GLOBAL STATE
+     ============================================ */
+  const SESSIONS_KEY = 'quorixai_sessions';
+  const ACTIVE_KEY = 'quorixai_active';
+  let sessions = {};
+  let activeSessionId = null;
+  let isProcessing = false;
+  let modalCallback = null;
+  let currentRawCode = '';
 
-  function init() { loadChat(); loadSettings(); renderChat(); setupTextarea(); }
-  function loadChat() { try { chatMessages = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { chatMessages = []; } }
-  function saveChat() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(chatMessages)); } catch { showToast('Storage full', 'error'); } }
-  function loadSettings() { try { const d = localStorage.getItem(SETTINGS_KEY); if (d) document.getElementById('pexelsKeyInput').value = JSON.parse(d).pexelsKey || ''; } catch {} }
-  function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ pexelsKey: document.getElementById('pexelsKeyInput').value.trim() })); toggleSettings(); showToast('Settings saved', 'success'); }
-  function getPexelsKey() { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)).pexelsKey || ''; } catch { return ''; } }
+  // Persists across refresh: maps codeId -> {content, name}
+  let codeStore = {};
 
-  function setupTextarea() {
-    const ta = document.getElementById('userInput');
-    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; });
-    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  /* ============================================
+     INITIALIZATION
+     ============================================ */
+  function init() {
+    loadSessions();
+    rebuildCodeStore();
+    renderSessionList();
+    setupInputListeners();
   }
 
-  function renderChat() {
-    const area = document.getElementById('chatArea'); area.querySelectorAll('.msg-row').forEach(el => el.remove());
-    if (chatMessages.length === 0) { document.getElementById('welcomeScreen').style.display = 'flex'; return; }
-    document.getElementById('welcomeScreen').style.display = 'none'; chatMessages.forEach(msg => area.appendChild(createMsgElement(msg))); scrollToBottom();
+  function toggleSidebar() {
+    const sb = document.getElementById('sessionSidebar');
+    const bd = document.getElementById('sidebarBackdrop');
+    const willOpen = !sb.classList.contains('open');
+    sb.classList.toggle('open', willOpen);
+    bd.classList.toggle('active', willOpen);
+    if (willOpen) renderSessionList();
   }
 
-  function createMsgElement(msg) {
-    const row = document.createElement('div'); row.className = `msg-row ${msg.role}`;
-    const avatar = document.createElement('div'); avatar.className = 'msg-avatar'; avatar.textContent = msg.role === 'ai' ? 'Q' : 'U';
-    const content = document.createElement('div'); content.className = 'msg-content'; content.innerHTML = msg.html;
-    if (msg.time) { const t = document.createElement('div'); t.className = 'msg-time'; t.textContent = msg.time; content.appendChild(t); }
-    row.appendChild(avatar); row.appendChild(content); return row;
+  function closeSidebar() {
+    document.getElementById('sessionSidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('active');
   }
 
-  function addMessageToDOM(msg) { document.getElementById('welcomeScreen').style.display = 'none'; document.getElementById('chatArea').appendChild(createMsgElement(msg)); scrollToBottom(); }
-  function scrollToBottom() { requestAnimationFrame(() => { document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight; }); }
-  function showTyping() { const area = document.getElementById('chatArea'); const row = document.createElement('div'); row.className = 'msg-row ai'; row.id = 'typingIndicator'; row.innerHTML = `<div class="msg-avatar">Q</div><div class="msg-content"><div class="typing-dots"><span></span><span></span><span></span></div></div>`; area.appendChild(row); scrollToBottom(); }
-  function removeTyping() { const e = document.getElementById('typingIndicator'); if (e) e.remove(); }
-
-  // Fast Chat Streaming
-  async function streamText(element, html, speed = 1) {
-    let output = ''; let inTag = false; let buffer = '';
-    for (let i = 0; i < html.length; i++) {
-      if (html[i] === '<') { inTag = true; output += buffer; buffer = ''; }
-      if (inTag) { output += html[i]; if (html[i] === '>') inTag = false; }
-      else { buffer += html[i]; if (buffer.length >= 6 || i === html.length - 1) { output += buffer; buffer = ''; element.innerHTML = output; await new Promise(r => setTimeout(r, speed)); } }
+  /* ============================================
+     SESSION MANAGEMENT
+     ============================================ */
+  function loadSessions() {
+    try {
+      sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY)) || {};
+    } catch (e) {
+      sessions = {};
     }
-    element.innerHTML = html; bindCopyBtns(element);
-  }
-
-  // Panel Hyper-Speed Streaming
-  async function streamPanelCode(codeText) {
-    const codeEl = document.getElementById('panelCode');
-    codeEl.innerHTML = '<span class="panel-cursor"></span>';
-    let output = '';
-    const chunkSize = 12; // Stream 12 chars at a time for hyper-speed feel
-    for (let i = 0; i < codeText.length; i += chunkSize) {
-      const chunk = codeText.substring(i, Math.min(i + chunkSize, codeText.length));
-      output += chunk;
-      codeEl.innerText = output;
-      codeEl.appendChild(document.createElement('span')).className = 'panel-cursor';
-      codeEl.scrollTop = codeEl.scrollHeight;
-      await new Promise(r => setTimeout(r, 1)); // 1ms delay = lightning speed
+    activeSessionId = localStorage.getItem(ACTIVE_KEY);
+    if (!activeSessionId || !sessions[activeSessionId]) {
+      createNewSession(false);
     }
-    codeEl.innerText = codeText; // Final clean render
-    document.getElementById('runCodeBtn').style.display = 'flex'; // Show run button when done
+    renderChat();
   }
 
-  function bindCopyBtns(root) {
-    root.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation(); e.preventDefault();
-        const codeBlock = btn.closest('.code-block').querySelector('.code-body');
-        navigator.clipboard.writeText(codeBlock.innerText).then(() => { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); });
+  function saveSessions() {
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    localStorage.setItem(ACTIVE_KEY, activeSessionId);
+  }
+
+  function createNewSession(switchTo = true) {
+    const id = 'sess_' + Date.now();
+    const name = new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    sessions[id] = { name, messages: [] };
+    if (switchTo) {
+      switchSession(id);
+    } else {
+      saveSessions();
+      renderSessionList();
+    }
+  }
+
+  function switchSession(id) {
+    activeSessionId = id;
+    saveSessions();
+    renderSessionList();
+    renderChat();
+    closeSidebar();
+  }
+
+  function deleteSession(id, e) {
+    e.stopPropagation();
+    delete sessions[id];
+    if (activeSessionId === id) {
+      const keys = Object.keys(sessions);
+      if (keys.length > 0) activeSessionId = keys[0];
+      else createNewSession(false);
+    }
+    saveSessions();
+    rebuildCodeStore();
+    renderSessionList();
+    renderChat();
+  }
+
+  function renderSessionList() {
+    const list = document.getElementById('sessionList');
+    list.innerHTML = '';
+    const sortedIds = Object.keys(sessions).sort((a, b) => {
+      return parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]);
+    });
+    if (sortedIds.length === 0) {
+      list.innerHTML = '<div class="session-empty">No saved chats yet.</div>';
+      return;
+    }
+    sortedIds.forEach(id => {
+      const s = sessions[id];
+      const count = (s.messages || []).length;
+      const div = document.createElement('div');
+      div.className = `session-item ${id === activeSessionId ? 'active' : ''}`;
+      div.onclick = () => switchSession(id);
+      div.innerHTML = `<span class="session-name"><i class="fas fa-message" style="margin-right:8px;font-size:11px;"></i>${escapeHTML(s.name)}</span><button class="del-session" onclick="deleteSession('${id}', event)" title="Delete chat"><i class="fas fa-times"></i></button>`;
+      list.appendChild(div);
+    });
+  }
+
+  function getActiveMessages() {
+    return sessions[activeSessionId]?.messages || [];
+  }
+
+  /* ============================================
+     CODE STORE (persists panel code across refresh)
+     ============================================ */
+  function rebuildCodeStore() {
+    codeStore = {};
+    Object.values(sessions).forEach(sess => {
+      sess.messages.forEach(msg => {
+        if (msg.codeData && msg.codeId) {
+          codeStore[msg.codeId] = msg.codeData;
+        }
       });
     });
   }
 
-  async function sendMessage() {
-    if (isProcessing) return; const input = document.getElementById('userInput'); const text = input.value.trim(); if (!text) return;
-    input.value = ''; input.style.height = 'auto'; const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const userMsg = { role: 'user', html: escapeHTML(text), time: timeStr }; chatMessages.push(userMsg); addMessageToDOM(userMsg); saveChat();
-    isProcessing = true; document.getElementById('sendBtn').disabled = true; showTyping();
-
-    try {
-      const intent = detectIntent(text); let html = '';
-      switch (intent.type) {
-        case 'weather': html = await handleWeather(); break;
-        case 'images': html = await handleImages(intent.query); break;
-        case 'github': html = await handleGithub(intent.query); break;
-        case 'wiki': default: html = await handleWiki(intent.query || text); break;
-      }
-      const aiMsg = { role: 'ai', html, time: timeStr }; chatMessages.push(aiMsg); removeTyping();
-      const msgEl = createMsgElement({ ...aiMsg, html: '' }); document.getElementById('chatArea').appendChild(msgEl);
-      await streamText(msgEl.querySelector('.msg-content'), html); saveChat();
-    } catch (err) {
-      removeTyping(); const errMsg = { role: 'ai', html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>`, time: timeStr };
-      chatMessages.push(errMsg); addMessageToDOM(errMsg); saveChat();
+  /* ============================================
+     CHAT RENDERING
+     ============================================ */
+  function renderChat() {
+    const area = document.getElementById('chatArea');
+    area.querySelectorAll('.msg-row').forEach(el => el.remove());
+    const msgs = getActiveMessages();
+    if (msgs.length === 0) {
+      document.getElementById('welcomeScreen').style.display = 'flex';
+      return;
     }
-    isProcessing = false; document.getElementById('sendBtn').disabled = false;
+    document.getElementById('welcomeScreen').style.display = 'none';
+    msgs.forEach(msg => {
+      const el = createMsgElement(msg);
+      area.appendChild(el);
+      bindInteractiveEls(el);
+    });
+    scrollToBottom();
   }
 
-  function quickAction(text) { document.getElementById('userInput').value = text; sendMessage(); }
+  function createMsgElement(msg) {
+    const row = document.createElement('div');
+    row.className = `msg-row ${msg.role}`;
+    const avatar = document.createElement('div');
+    avatar.className = 'msg-avatar';
+    avatar.textContent = msg.role === 'ai' ? 'Q' : 'U';
+    const content = document.createElement('div');
+    content.className = 'msg-content';
+    content.innerHTML = msg.html;
+    if (msg.time) {
+      const t = document.createElement('div');
+      t.className = 'msg-time';
+      t.textContent = msg.time;
+      content.appendChild(t);
+    }
+    row.appendChild(avatar);
+    row.appendChild(content);
+    return row;
+  }
 
+  function addMessageToDOM(msg) {
+    document.getElementById('welcomeScreen').style.display = 'none';
+    const el = createMsgElement(msg);
+    document.getElementById('chatArea').appendChild(el);
+    bindInteractiveEls(el);
+    scrollToBottom();
+  }
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      const area = document.getElementById('chatArea');
+      area.scrollTop = area.scrollHeight;
+    });
+  }
+
+  function showTyping() {
+    const area = document.getElementById('chatArea');
+    const row = document.createElement('div');
+    row.className = 'msg-row ai';
+    row.id = 'typingIndicator';
+    row.innerHTML = `<div class="msg-avatar">Q</div><div class="msg-content"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+    area.appendChild(row);
+    scrollToBottom();
+  }
+
+  function removeTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  /* ============================================
+     BIND INTERACTIVE ELEMENTS (panel btns, images)
+     ============================================ */
+  function bindInteractiveEls(root) {
+    root.querySelectorAll('.view-panel-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const codeId = btn.getAttribute('data-code-id');
+        if (codeId) openCodePanel(codeId);
+      };
+    });
+
+    root.querySelectorAll('.img-grid img').forEach(img => {
+      img.onclick = () => openLightbox(img.src);
+    });
+  }
+
+  /* ============================================
+     INPUT & SEND LOGIC
+     ============================================ */
+  function setupInputListeners() {
+    const input = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendMessage();
+    });
+  }
+
+  async function sendMessage() {
+    if (isProcessing) return;
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (getActiveMessages().length === 0) {
+      sessions[activeSessionId].name = text.substring(0, 25) + (text.length > 25 ? '...' : '');
+      renderSessionList();
+    }
+
+    const userMsg = { role: 'user', html: escapeHTML(text), time: timeStr };
+    sessions[activeSessionId].messages.push(userMsg);
+    addMessageToDOM(userMsg);
+    saveSessions();
+
+    isProcessing = true;
+    document.getElementById('sendBtn').disabled = true;
+    showTyping();
+
+    try {
+      const intent = detectIntent(text);
+      let result;
+
+      switch (intent.type) {
+        case 'weather':
+          result = await handleWeather();
+          break;
+        case 'images':
+          result = await handleImages(intent.query);
+          break;
+        case 'github':
+          result = await handleGithub(intent.query);
+          break;
+        case 'wiki':
+        default:
+          result = await handleWiki(intent.query || text);
+          break;
+      }
+
+      const aiMsg = {
+        role: 'ai',
+        html: result.html,
+        time: timeStr,
+        codeId: result.codeId || null,
+        codeData: result.codeData || null
+      };
+
+      if (result.codeId && result.codeData) {
+        codeStore[result.codeId] = result.codeData;
+      }
+
+      sessions[activeSessionId].messages.push(aiMsg);
+      removeTyping();
+
+      const msgEl = createMsgElement({ ...aiMsg, html: '' });
+      document.getElementById('chatArea').appendChild(msgEl);
+      await streamText(msgEl.querySelector('.msg-content'), result.html);
+      bindInteractiveEls(msgEl);
+      saveSessions();
+
+      // Always auto-open the code panel when a full HTML file was generated
+      if (result.codeId && result.codeData) {
+        openCodePanel(result.codeId);
+      }
+
+    } catch (err) {
+      removeTyping();
+      const errMsg = {
+        role: 'ai',
+        html: `<p><strong>Error:</strong> ${escapeHTML(err.message || 'Something went wrong.')}</p>`,
+        time: timeStr
+      };
+      sessions[activeSessionId].messages.push(errMsg);
+      addMessageToDOM(errMsg);
+      saveSessions();
+    }
+
+    isProcessing = false;
+    document.getElementById('sendBtn').disabled = false;
+  }
+
+  function quickAction(text) {
+    document.getElementById('userInput').value = text;
+    sendMessage();
+  }
+
+  /* ============================================
+     INTENT DETECTION
+     ============================================ */
   function detectIntent(text) {
     const lower = text.toLowerCase();
-    if (/\b(weather|temperature|forecast)\b/i.test(lower)) return { type: 'weather' };
-    const imgMatch = lower.match(/(?:show|find|get)\s+(?:me\s+)?(?:images?|photos?|pictures?)\s+(?:of\s+)?(.+)/i);
-    if (imgMatch) return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
-    const ghMatch = lower.match(/(?:can you |please )?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
-    if (ghMatch) return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
-    const wikiQuery = lower.replace(/\b(tell\s+me\s+about|who\s+is|what\s+is|explain|describe|about)\b/gi, '').trim();
+
+    if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
+      return { type: 'weather' };
+    }
+
+    const imgMatch = lower.match(
+      /(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i
+    );
+    const imgDirect = lower.match(
+      /(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i
+    );
+    if (imgMatch) {
+      return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
+    }
+    if (imgDirect && !/\b(tell|explain|what|who|how|why|when|where|is|are|was|were|do|does|did)\b/i.test(lower.substring(0, lower.indexOf(imgDirect[0])))) {
+      return { type: 'images', query: imgDirect[1].replace(/[.!?]+$/, '').trim() };
+    }
+
+    const ghMatch = lower.match(
+      /(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i
+    );
+    if (ghMatch) {
+      return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
+    }
+
+    const wikiQuery = lower
+      .replace(/\b(tell\s+me\s+about|who\s+is|what\s+(is|are)|explain|describe|about|define|info(?:rmation)?\s+(?:on|about))\b/gi, '')
+      .trim();
     return { type: 'wiki', query: wikiQuery || text };
   }
 
+  /* ============================================
+     STREAMING (handles HTML tags properly)
+     ============================================ */
+  async function streamText(element, html, speed = 1) {
+    let output = '';
+    let i = 0;
+    while (i < html.length) {
+      if (html[i] === '<') {
+        const tagEnd = html.indexOf('>', i);
+        if (tagEnd !== -1) {
+          output += html.substring(i, tagEnd + 1);
+          i = tagEnd + 1;
+        } else {
+          output += html[i];
+          i++;
+        }
+      } else {
+        const chunkEnd = Math.min(i + 4, html.length);
+        let nextTag = html.indexOf('<', i);
+        let end = nextTag !== -1 && nextTag < chunkEnd ? nextTag : chunkEnd;
+        output += html.substring(i, end);
+        i = end;
+        await new Promise(r => setTimeout(r, speed));
+      }
+      element.innerHTML = output;
+    }
+    element.innerHTML = html;
+  }
+
+  async function streamPanelCode(codeText) {
+    const codeEl = document.getElementById('panelCode');
+    codeEl.textContent = '';
+    const chunkSize = 120;
+    for (let i = 0; i < codeText.length; i += chunkSize) {
+      const chunk = codeText.substring(i, Math.min(i + chunkSize, codeText.length));
+      codeEl.textContent += chunk;
+      const body = document.getElementById('panelBody');
+      body.scrollTop = body.scrollHeight;
+      await new Promise(r => setTimeout(r, 0));
+    }
+    document.getElementById('runCodeBtn').style.display = 'flex';
+  }
+
+  /* ============================================
+     FULL HTML WRAPPER — always produce a complete,
+     runnable HTML document regardless of source/size
+     ============================================ */
+  function wrapAsFullHTML(content, path) {
+    // Already a full document — use as-is
+    if (/<!DOCTYPE html>|<html[\s>]/i.test(content)) return content;
+
+    const ext = (path.split('.').pop() || '').toLowerCase();
+    const baseStyle = `*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#0d1117;color:#e8e6f0;padding:24px;line-height:1.6}`;
+
+    if (ext === 'css') {
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeAttr(path)}</title>
+<style>
+${content}
+</style>
+</head>
+<body>
+  <h1>CSS Preview</h1>
+  <p>This document applies the stylesheet <strong>${escapeHTML(path)}</strong>.</p>
+  <button>Sample Button</button>
+</body>
+</html>`;
+    }
+
+    if (['js', 'ts', 'jsx', 'tsx'].includes(ext)) {
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeAttr(path)}</title>
+<style>${baseStyle}</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+${content}
+<\/script>
+</body>
+</html>`;
+    }
+
+    // HTML fragment or any other content: embed inside a body
+    const isMarkup = /<\w+[^>]*>/.test(content);
+    const bodyContent = isMarkup ? content : `<pre style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace">${escapeHTML(content)}</pre>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeAttr(path)}</title>
+<style>${baseStyle}</style>
+</head>
+<body>
+${bodyContent}
+</body>
+</html>`;
+  }
+
+  /* ============================================
+     HANDLERS
+     ============================================ */
+
+  // --- Wikipedia ---
   async function handleWiki(query) {
-    const searchData = await (await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`)).json();
-    if (!searchData.query?.search?.length) return `<p>No results for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge wiki"><i class="fab fa-wikipedia-w"></i> Wikipedia</div>`;
-    const pageId = searchData.query.search[0].pageid; const title = searchData.query.search[0].title;
-    const extractData = await (await fetch(`https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`)).json();
-    let extract = extractData.query.pages[pageId].extract || 'No extract available.';
-    if (extract.length > 600) { extract = extract.substring(0, 600); const lp = extract.lastIndexOf('.'); extract = (lp > 300 ? extract.substring(0, lp + 1) : extract) + '...'; }
-    return `<p><strong>${escapeHTML(title)}</strong></p><p>${escapeHTML(extract)}</p><div class="source-badge wiki"><i class="fab fa-wikipedia-w"></i> Wikipedia</div>`;
+    const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`;
+    const searchData = await (await fetch(searchUrl)).json();
+
+    if (!searchData.query?.search?.length) {
+      return { html: `<p>No results found for <strong>${escapeHTML(query)}</strong>.</p>` };
+    }
+
+    const pageId = searchData.query.search[0].pageid;
+    const title = searchData.query.search[0].title;
+    const extractUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`;
+    const extractData = await (await fetch(extractUrl)).json();
+
+    let extract = extractData.query?.pages?.[pageId]?.extract || 'No extract available.';
+    if (extract.length > 600) {
+      extract = extract.substring(0, 600);
+      const lp = extract.lastIndexOf('.');
+      extract = (lp > 300 ? extract.substring(0, lp + 1) : extract) + ' ...';
+    }
+
+    return {
+      html: `<p><strong>${escapeHTML(title)}</strong></p><p>${escapeHTML(extract)}</p>`
+    };
   }
 
+  // --- Images (Wikipedia Image API — no key needed) ---
   async function handleImages(query) {
-    const apiKey = "QmebQALowGk9LoYQqUGaPhQ5zUMQWwd1mRaFTV4HvNQyYS1i6v9H5V68"
-    if (!apiKey) return `<p>Add a Pexels API key in <strong>Settings</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
-    const data = await (await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6`, { headers: { Authorization: apiKey } })).json();
-    if (!data.photos?.length) return `<p>No images for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
-    let html = `<p>Images for <strong>${escapeHTML(query)}</strong>:</p><div class="img-grid">`;
-    data.photos.forEach(p => { html += `<img src="${p.src.medium}" alt="${escapeHTML(p.alt || query)}" onclick="openLightbox('${p.src.large2x}')" loading="lazy">`; });
-    return html + `</div><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
+    try {
+      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=8&prop=pageimages|info&piprop=thumbnail&pithumbsize=600&inprop=url&format=json&origin=*`;
+      const data = await (await fetch(searchUrl)).json();
+
+      if (!data.query?.pages) {
+        return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>.</p>` };
+      }
+
+      const pages = Object.values(data.query.pages)
+        .filter(p => p.thumbnail && p.thumbnail.source)
+        .slice(0, 6);
+
+      if (!pages.length) {
+        return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>. Try a more specific term.</p>` };
+      }
+
+      let html = `<p>Images for <strong>${escapeHTML(query)}</strong>:</p><div class="img-grid">`;
+      pages.forEach(p => {
+        const imgUrl = escapeAttr(p.thumbnail.source);
+        const altText = escapeAttr(p.title || query);
+        html += `<img src="${imgUrl}" alt="${altText}" loading="lazy">`;
+      });
+      html += `</div>`;
+      return { html };
+
+    } catch (err) {
+      return { html: `<p>Failed to fetch images: ${escapeHTML(err.message)}</p>` };
+    }
   }
 
+  // --- Weather (Open-Meteo + Nominatim — no key needed) ---
   async function handleWeather() {
     let lat, lon, cityName = 'your location';
-    try { const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 })); lat = pos.coords.latitude; lon = pos.coords.longitude; }
-    catch { return `<p><strong>Location access denied.</strong></p><div class="source-badge weather"><i class="fas fa-cloud-sun"></i> Open-Meteo</div>`; }
-    try { const geo = await (await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10`)).json(); if (geo.address) cityName = geo.address.city || geo.address.town || geo.address.county || cityName; } catch {}
-    const data = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,surface_pressure&temperature_unit=celsius&timezone=auto`)).json();
+
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+      });
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    } catch {
+      return {
+        html: `<p><strong>Location access denied.</strong> Please allow location access to check the weather, or try asking something else.</p>`
+      };
+    }
+
+    try {
+      const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10`;
+      const geo = await (await fetch(geoUrl)).json();
+      if (geo.address) {
+        cityName = geo.address.city || geo.address.town || geo.address.village || geo.address.county || cityName;
+      }
+    } catch { /* use default city name */ }
+
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,surface_pressure&temperature_unit=celsius&timezone=auto`;
+    const data = await (await fetch(weatherUrl)).json();
     const c = data.current;
-    return `<p><strong>Weather in ${escapeHTML(cityName)}</strong></p><div class="weather-card"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:48px;">${weatherCodeToIcon(c.weather_code)}</div><div><div class="temp">${Math.round(c.temperature_2m)}&deg;C</div><div style="color:var(--muted);font-size:13px;">${weatherCodeToText(c.weather_code)}</div></div></div><div class="weather-grid"><div class="w-item"><div class="w-val">${c.relative_humidity_2m}%</div><div class="w-label">Humidity</div></div><div class="w-item"><div class="w-val">${c.wind_speed_10m}km/h</div><div class="w-label">Wind</div></div><div class="w-item"><div class="w-val">${Math.round(c.surface_pressure)}hPa</div><div class="w-label">Pressure</div></div></div></div><div class="source-badge weather"><i class="fas fa-cloud-sun"></i> Open-Meteo</div>`;
+
+    if (!c) {
+      return { html: `<p>Could not retrieve weather data. Please try again.</p>` };
+    }
+
+    return {
+      html: `<p><strong>Weather in ${escapeHTML(cityName)}</strong></p><div class="weather-card"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:48px;">${weatherCodeToIcon(c.weather_code)}</div><div><div class="temp">${Math.round(c.temperature_2m)}&deg;C</div><div style="color:var(--muted);font-size:13px;">${weatherCodeToText(c.weather_code)}</div></div></div><div class="weather-grid"><div class="w-item"><div class="w-val">${c.relative_humidity_2m}%</div><div class="w-label">Humidity</div></div><div class="w-item"><div class="w-val">${c.wind_speed_10m} km/h</div><div class="w-label">Wind</div></div><div class="w-item"><div class="w-val">${Math.round(c.surface_pressure)} hPa</div><div class="w-label">Pressure</div></div></div></div>`
+    };
+  }
+
+  // --- Code (GitHub source) ---
+  function decodeBase64(base64) {
+    try {
+      const binary = atob(base64.replace(/\s/g, ''));
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new TextDecoder('utf-8').decode(bytes);
+    } catch {
+      try { return atob(base64.replace(/\s/g, '')); } catch { return ''; }
+    }
+  }
+
+  async function fetchJSON(url) {
+    const res = await fetch(url);
+    if (res.status === 403) throw new Error('GitHub API rate limit reached. Please wait a few minutes and try again.');
+    if (!res.ok) throw new Error(`Request failed (${res.status})`);
+    return res.json();
   }
 
   async function handleGithub(query) {
-    const repoData = await (await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=1`)).json();
-    if (!repoData.items?.length) return `<p>No GitHub repositories found for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
-    
-    const repo = repoData.items[0];
-    const repoInfo = await (await fetch(repo.url)).json();
-    const branch = repoInfo.default_branch;
-    const treeData = await (await fetch(`https://api.github.com/repos/${repo.full_name}/git/trees/${branch}?recursive=1`)).json();
+    try {
+      const repoData = await fetchJSON(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=1`);
+      if (!repoData.items?.length) {
+        return { html: `<p>No code repositories found for <strong>${escapeHTML(query)}</strong>.</p>` };
+      }
 
-    const mainFiles = treeData.tree.filter(f => f.type === 'blob' && /\.(html|js|css|py|ts|jsx|tsx)$/i.test(f.path) && !/node_modules|vendor|dist|build/i.test(f.path))
-      .sort((a, b) => a.path.split('/').length - b.path.split('/').length).slice(0, 2);
+      const repo = repoData.items[0];
+      const repoInfo = await fetchJSON(repo.url);
+      const branch = repoInfo.default_branch || 'main';
+      const treeData = await fetchJSON(`https://api.github.com/repos/${repo.full_name}/git/trees/${branch}?recursive=1`);
 
-    if (!mainFiles.length) return `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but no source code detected.</p><div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
+      // Prefer an HTML file; otherwise fall back to the shallowest source file
+      const sourceFiles = (treeData.tree || [])
+        .filter(f => f.type === 'blob' && /\.(html|js|css|py|ts|jsx|tsx|c|cpp|java|rb|go|rs)$/i.test(f.path) && !/node_modules|vendor|dist|build|__pycache__|\.git/i.test(f.path));
 
-    let chatHtml = `<p>Pulled code from <strong>${escapeHTML(repo.full_name)}</strong>:</p>`;
-    let panelFileContent = '';
-    let panelFileName = '';
+      const htmlFirst = sourceFiles
+        .slice()
+        .sort((a, b) => {
+          const aHtml = /\.html?$/i.test(a.path) ? 0 : 1;
+          const bHtml = /\.html?$/i.test(b.path) ? 0 : 1;
+          if (aHtml !== bHtml) return aHtml - bHtml;
+          return a.path.split('/').length - b.path.split('/').length;
+        });
 
-    for (const file of mainFiles) {
+      const chosen = htmlFirst[0];
+
+      if (!chosen) {
+        return { html: `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but no source code files were detected.</p>` };
+      }
+
+      let rawContent = '';
       try {
-        const fileData = await (await fetch(file.url)).json();
-        const content = atob(fileData.content.replace(/\n/g, ''));
-        const ext = file.path.split('.').pop().toLowerCase();
-        const langMap = { js: 'javascript', jsx: 'javascript', ts: 'typescript', tsx: 'typescript', py: 'python', html: 'html', css: 'css' };
-        
-        const isLong = content.length > 500;
-        const displayContent = isLong ? content.substring(0, 300) + '\n// ... (Open in Panel to see full code)' : content;
-        const cid = 'code-' + Math.random().toString(36).substr(2, 9);
+        const fileData = await fetchJSON(chosen.url);
+        rawContent = fileData.content ? decodeBase64(fileData.content) : '';
+      } catch (fileErr) {
+        return { html: `<p><strong>Error fetching file:</strong> ${escapeHTML(fileErr.message)}</p>` };
+      }
 
-        chatHtml += `<div class="code-block">
-          <div class="code-header"><span>${escapeHTML(file.path)}</span><button class="copy-btn" data-cid="${cid}">Copy</button></div>
-          <pre class="code-body" id="${cid}">${escapeHTML(displayContent)}</pre>
-        </div>`;
+      if (!rawContent.trim()) {
+        return { html: `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but the file was empty or too large to read.</p>` };
+      }
 
-        if (isLong && !panelFileContent) { // Put the first long file in the panel
-          panelFileContent = content;
-          panelFileName = file.path;
-        }
-      } catch {}
+      // ALWAYS build a full, runnable HTML document — even for short snippets
+      const fullHTML = wrapAsFullHTML(rawContent, chosen.path);
+      const fileName = /\.html?$/i.test(chosen.path) ? chosen.path : (chosen.path + ' → index.html');
+
+      const codeId = 'code_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const codeData = { content: fullHTML, name: fileName };
+      codeStore[codeId] = codeData;
+
+      const chatHtml = `<p>Built a full HTML file from <strong>${escapeHTML(repo.full_name)}</strong> (<code>${escapeHTML(chosen.path)}</code>). It's open in the side panel — hit <strong>Run Code</strong> to preview it.</p><button class="view-panel-btn" data-code-id="${codeId}"><i class="fas fa-expand"></i> View Full HTML & Run</button>`;
+
+      return { html: chatHtml, codeId, codeData };
+
+    } catch (err) {
+      return {
+        html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>`
+      };
     }
-
-    // If there's a long file, add the button to open the side panel
-    if (panelFileContent) {
-      const pid = 'panel-' + Math.random().toString(36).substr(2, 9);
-      chatHtml += `<button class="view-panel-btn" onclick="openCodePanel('${pid}')"><i class="fas fa-expand"></i> View Full Code & Run</button>`;
-      // Temporarily store code in window scope for the button to grab
-      window[`quorix_code_${pid}`] = { content: panelFileContent, name: panelFileName };
-    }
-
-    chatHtml += `<div class="source-badge github"><i class="fab fa-github"></i> GitHub</div>`;
-    return chatHtml;
   }
 
-  // Panel Logic
-  function openCodePanel(id) {
-    const data = window[`quorix_code_${id}`];
-    if (!data) return;
+  /* ============================================
+     CODE PANEL
+     ============================================ */
+  function openCodePanel(codeId) {
+    const data = codeStore[codeId];
+    if (!data) {
+      showToast('Code data not found. It may have been cleared.', 'error');
+      return;
+    }
     currentRawCode = data.content;
     document.getElementById('panelFileName').textContent = data.name;
-    document.getElementById('runCodeBtn').style.display = 'none'; // Hide until streaming finishes
+    document.getElementById('runCodeBtn').style.display = 'none';
     document.getElementById('panelPreview').classList.remove('active');
     document.getElementById('panelCode').style.display = 'block';
-    
     document.getElementById('codePanel').classList.add('open');
-    document.getElementById('panelBackdrop').classList.add('open');
     document.getElementById('chatColumn').classList.add('panel-open');
-    
     streamPanelCode(data.content);
   }
 
   function closeCodePanel() {
     document.getElementById('codePanel').classList.remove('open');
-    document.getElementById('panelBackdrop').classList.remove('open');
     document.getElementById('chatColumn').classList.remove('panel-open');
+    document.getElementById('panelPreview').classList.remove('active');
+    document.getElementById('panelCode').style.display = 'block';
+    const iframe = document.getElementById('previewIframe');
+    iframe.src = 'about:blank';
+  }
+
+  function copyPanelCode() {
+    navigator.clipboard.writeText(currentRawCode).then(() => {
+      const btn = document.getElementById('panelCopyBtn');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1500);
+    }).catch(() => {
+      showToast('Failed to copy code', 'error');
+    });
   }
 
   function runCode() {
     const preview = document.getElementById('panelPreview');
     const iframe = document.getElementById('previewIframe');
-    
     document.getElementById('panelCode').style.display = 'none';
     preview.classList.add('active');
 
-    // Wrap in basic HTML if it's JS/CSS, run raw if HTML
-    let htmlContent = currentRawCode;
-    if (!/<html/i.test(htmlContent)) {
-       htmlContent = `<!DOCTYPE html><html><head><style>body{margin:0;font-family:sans-serif;background:#111;color:#eee;padding:20px;}</style></head><body><script>${currentRawCode}<\/script></body></html>`;
-    }
+    // currentRawCode is always a full HTML document at this point
+    const htmlContent = /<html[\s>]|<!DOCTYPE html>/i.test(currentRawCode)
+      ? currentRawCode
+      : wrapAsFullHTML(currentRawCode, 'index.html');
 
     const blob = new Blob([htmlContent], { type: 'text/html' });
     iframe.src = URL.createObjectURL(blob);
     showToast('Code executed successfully', 'success');
   }
 
-  function weatherCodeToText(code) { const m = { 0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',51:'Light drizzle',61:'Slight rain',63:'Moderate rain',71:'Slight snow',80:'Rain showers',95:'Thunderstorm'}; return m[code]||'Unknown'; }
-  function weatherCodeToIcon(code) { if (code===0) return '☀️'; if (code<=2) return '⛅'; if (code===3) return '☁️'; if (code<=48) return '🌫️'; if (code<=65) return '🌧️'; if (code<=77) return '🌨️'; if (code>=95) return '⛈️'; return '🌤️'; }
-  
-  function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-  function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('active'); }
-  function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCodePanel(); } });
+  /* ============================================
+     MODAL & CONFIRM
+     ============================================ */
+  function confirmClearChat() {
+    if (getActiveMessages().length === 0) return;
+    document.getElementById('modalTitle').textContent = 'Clear Chat?';
+    document.getElementById('modalMsg').textContent = 'Delete all messages in this session?';
+    modalCallback = () => {
+      sessions[activeSessionId].messages = [];
+      saveSessions();
+      rebuildCodeStore();
+      renderChat();
+      showToast('Chat cleared', 'success');
+    };
+    document.getElementById('confirmModal').classList.add('active');
+  }
 
-  function showToast(msg, type = 'success') { const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`; document.getElementById('toastContainer').appendChild(t); setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(30px)'; t.style.transition='all 0.3s'; setTimeout(() => t.remove(), 300); }, 3000); }
-  function confirmClearChat() { if (chatMessages.length === 0) return; document.getElementById('modalTitle').textContent = 'Clear Chat?'; document.getElementById('modalMsg').textContent = 'Delete all messages?'; modalCallback = () => { chatMessages = []; saveChat(); renderChat(); showToast('Chat cleared', 'success'); }; document.getElementById('confirmModal').classList.add('active'); }
-  function closeModal() { document.getElementById('confirmModal').classList.remove('active'); modalCallback = null; }
-  document.getElementById('modalConfirmBtn').addEventListener('click', () => { if (modalCallback) modalCallback(); closeModal(); });
-  function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); document.getElementById('settingsBackdrop').classList.toggle('open'); }
+  function closeModal() {
+    document.getElementById('confirmModal').classList.remove('active');
+    modalCallback = null;
+  }
+
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+    if (modalCallback) modalCallback();
+    closeModal();
+  });
+
+  /* ============================================
+     UTILITIES
+     ============================================ */
+  function weatherCodeToText(code) {
+    const m = { 0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Foggy', 48: 'Depositing rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle', 61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow', 77: 'Snow grains', 80: 'Slight showers', 81: 'Moderate showers', 82: 'Violent showers', 85: 'Slight snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Thunderstorm with heavy hail' };
+    return m[code] || 'Unknown';
+  }
+
+  function weatherCodeToIcon(code) {
+    if (code === 0) return '☀️';
+    if (code <= 2) return '⛅';
+    if (code === 3) return '☁️';
+    if (code <= 48) return '🌫️';
+    if (code <= 55) return '🌦️';
+    if (code <= 65) return '🌧️';
+    if (code <= 77) return '🌨️';
+    if (code <= 82) return '🌧️';
+    if (code >= 95) return '⛈️';
+    return '🌤️';
+  }
+
+  function escapeHTML(str) {
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : String(str);
+    return d.innerHTML;
+  }
+
+  // For use inside attribute values (escapes quotes too)
+  function escapeAttr(str) {
+    return escapeHTML(str).replace(/"/g, '&quot;');
+  }
+
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('active');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${escapeHTML(msg)}`;
+    document.getElementById('toastContainer').appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(30px)';
+      t.style.transition = 'all 0.3s';
+      setTimeout(() => t.remove(), 300);
+    }, 3000);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeLightbox();
+      closeCodePanel();
+      closeModal();
+      closeSidebar();
+    }
+  });
+
+  window.addEventListener('load', () => {
+    document.getElementById('userInput').focus();
+  });
 
   init();
 </script>
