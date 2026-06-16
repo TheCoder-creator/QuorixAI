@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script>window.__V0_SANDBOX_ID__="sb-5l92ea2cvdyy";window.__V0_CHAT_ID__="dVLs40k4vOC";window.__V0_SOURCE_MAP_FRAME_ROOT__="file:///vercel/share/v0-project/.next/dev/static";;(function up(e){let t=Symbol.for("__next_dev_bridge_runtime_observer__"),r=window[t],n=e||{},i=n.messageType||"next-dev-bridge:runtime",a=n.readyMessageType||"next-dev-bridge:runtime-ready",s=n.resetMessageType||"next-dev-bridge:runtime-reset",o=n.targetOrigin||"*",u=!1!==n.isAppDirectory,l="string"==typeof n.sourceMapEndpoint&&n.sourceMapEndpoint?n.sourceMapEndpoint:"",c="string"==typeof n.sourceMapFrameRoot&&n.sourceMapFrameRoot?n.sourceMapFrameRoot.replace(/\/+$/,""):"";if(r)return void f(a,{existing:!0,href:window.location.href,windowId:r.windowId});let d=1,p=`${Date.now()}-${Math.random().toString(36).slice(2)}`,h={errors:[]};function f(e,t){window.parent!==window&&window.parent.postMessage({type:e,...t},o)}async function m(e){let t={...e,id:d++,severity:"recoverable",at:new Date().toISOString()};h.errors=[...h.errors,t],f(i,{event:{type:"runtime:error",error:t,errors:h.errors},state:h,href:window.location.href,windowId:p}),l&&w(t).then(e=>{h.errors.some(e=>e.id===t.id)&&(t.mapped=e,h.errors=h.errors.map(e=>e.id===t.id?t:e),f(i,{event:{type:"runtime:error",error:t,errors:h.errors},state:h,href:window.location.href,windowId:p}))}).catch(()=>{})}function g(){0!==h.errors.length&&(h.errors=[],f(i,{event:{type:"runtime:cleared",errors:[]},state:h,href:window.location.href,windowId:p}))}function v(e){var t,r,n,i,a;let s,o,u,l;m((s=_((t=e).error,t.message||"Uncaught error"),o=t.filename||void 0,u=U(t.lineno),l=U(t.colno),{source:"error",name:s.name,message:s.message,stack:s.stack||(r=s.message,n=o,i=u,a=l,n&&i&&a?`${r}
-    at <anonymous> (${n}:${i}:${a})`:""),filename:o,line:u,column:l}))}function y(e){let t;m({source:"unhandledrejection",name:(t=_(e.reason,"Unhandled promise rejection")).name,message:t.message,stack:t.stack})}function b(e){let t=e.data;t&&"object"==typeof t&&t.type===s&&g()}function _(e,t){return e instanceof Error?{name:e.name||"Error",message:e.message||t,stack:e.stack||""}:e&&"object"==typeof e?{name:"string"==typeof e.name?e.name:"Error",message:"string"==typeof e.message?e.message:function(e){try{return JSON.stringify(e)}catch{return""}}(e)||t,stack:"string"==typeof e.stack?e.stack:""}:{name:"Error",message:"string"==typeof e?e:null==e?t:String(e),stack:""}}async function w(e){var t,r;let n=(t=String(e.stack).split("\n").map(j).filter(Boolean),r=e.filename,t.map(e=>({...e,file:function(e,t){var r,n;if("string"!=typeof e||0===e.length)return;let i=A(e);if(i)return O(i);if(r=e,/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(r))return e;if(t&&N(t)===N(e)){let e=A(t);return e?O(e):t}let a=e.startsWith("_next/")?`/${e}`:e;return a.startsWith("/_next/")?O(a):!(n=a).includes("/")&&n.endsWith(".js")&&(n.startsWith("_")||n.includes("._.")||n.startsWith("node_modules_")||n.startsWith("turbopack-"))?O(`/_next/static/chunks/${a}`):e}(e.file,r)})));return{message:e.message,stack:e.stack,frames:n,mappedFrames:n.length>0?await x(n):[]}}async function x(e){let t=function(e){let t=[],r=new Set;for(let n of(k(t,r,e),[R,I,P])){let i=function(e,t){let r=!1,n=e.map(e=>{if("string"!=typeof e.file)return e;let n=t(e.file);return n&&n!==e.file?(r=!0,{...e,file:n}):e});return r?n:null}(e,n);i&&k(t,r,i)}return t}(e),r=null;for(let n of t){let t=await E(n);if(function(e){for(let n of e){var t,r;let e=D(t=n)&&"fulfilled"===t.status&&D(t.value)&&D(t.value.originalStackFrame)?t.value.originalStackFrame:null;if(!e||!0===e.ignored)continue;let i="string"!=typeof(r=e.file)?"":r.trim();if(!(!i||function(e){let t=C(e);return/\/(?:_next\/static|\.next\/dev\/static)\/chunks\//.test(t)||t.includes("/next/dist/compiled/")}(i)))return!0}return!1}(t.mappedFrames))return S(e,t.mappedFrames);if(r=t.mappedFrames,!t.shouldTryNextVariant)break}return r??$(e,"No stack frames to map.")}async function E(e){try{let t=function(e){try{return new URL(e,window.location.href).origin!==window.location.origin}catch{return!1}}(l),r={body:JSON.stringify({frames:e,isServer:!1,isEdgeServer:!1,isAppDirectory:u,sourceOrigin:window.location.origin}),cache:"no-store",credentials:t?"omit":"same-origin",method:"POST",mode:t?"cors":"same-origin"};t||(r.headers={"content-type":"application/json"});let n=await fetch(l,{...r});if(!n.ok||204===n.status){let t=await n.text().catch(()=>"");return{mappedFrames:$(e,t||"No original stack frame response from Next dev server."),shouldTryNextVariant:!1}}let i=await n.json();if(!Array.isArray(i))return{mappedFrames:$(e,"Invalid original stack frame response from Next dev server."),shouldTryNextVariant:!1};return{mappedFrames:S(e,i),shouldTryNextVariant:!0}}catch(t){return{mappedFrames:$(e,t instanceof Error?t.message:String(t)),shouldTryNextVariant:!1}}}function S(e,t){return e.map((e,r)=>t[r]||{status:"rejected",reason:"No original stack frame response for frame."})}function $(e,t){return e.map(()=>({status:"rejected",reason:t}))}function k(e,t,r){let n=JSON.stringify(r.map(e=>e.file));t.has(n)||(t.add(n),e.push(r))}function O(e){return c?`${c}/${e.replace(/^\/_next\/static\/?/,"")}`:e}function R(e){let t=T(e);return t?`.next/dev/static/${t.replace(/^\/_next\/static\/?/,"")}`:null}function I(e){let t=T(e);return t?t.replace(/^\/+/,""):null}function P(e){let t=T(e);if(!t)return null;try{return new URL(t,window.location.origin).href}catch{return null}}function T(e){var t,r;let n,i=C(e);if(i.startsWith("/_next/static/"))return i;let a=(r="/.next/dev/static/",-1===(n=(t=i).indexOf(r))?"":t.slice(n+r.length));return a?`/_next/static/${a}`:""}function A(e){if(e.startsWith("/_next/"))return e;if(e.startsWith("_next/"))return`/${e}`;try{let t=new URL(e);return t.pathname.startsWith("/_next/")?t.pathname:""}catch{return""}}function C(e){try{return new URL(e).pathname}catch{}return e.startsWith("/")?e:`/${e}`}function N(e){return e.split("?")[0].split(/[\\/]/).pop()||e}function D(e){return"object"==typeof e&&null!==e}function j(e){let t=e.trim();if(!t.startsWith("at "))return null;let r=t.slice(3),n="<anonymous>",i=r,a=r.indexOf("("),s=r.endsWith(")")?r.length-1:-1;-1!==a&&-1!==s&&s>a&&(n=r.slice(0,a).trim()||"<anonymous>",i=r.slice(a+1,s));let o=/^(.*):(\d+):(\d+)$/.exec(i);return o?{file:o[1],methodName:n,arguments:[],line1:Number(o[2]),column1:Number(o[3])}:null}function U(e){return"number"==typeof e&&Number.isFinite(e)&&e>0?e:void 0}window.addEventListener("error",v),window.addEventListener("unhandledrejection",y),window.addEventListener("message",b),window[t]={windowId:p,getSnapshot:()=>({errors:h.errors.slice()}),reset:g,stop:function(){window.removeEventListener("error",v),window.removeEventListener("unhandledrejection",y),window.removeEventListener("message",b),delete window[t]}},f(a,{existing:!1,href:window.location.href,windowId:p})})({"messageType":"next-dev-bridge:event","sourceMapEndpoint":"/_v0/next-dev-bridge-stack-frames","sourceMapFrameRoot":"file:///vercel/share/v0-project/.next/dev/static"});</script><script async src="/v0-runtime-dist.js"></script><style>nextjs-portal{display: none !important}</style>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuorixAI</title>
@@ -66,6 +65,12 @@
   .quick-btn { padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); color: var(--fg); cursor: pointer; text-align: left; transition: all 0.25s; font-family: inherit; font-size: 13px; display: flex; align-items: center; gap: 10px; }
   .quick-btn:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-2px); }
   .quick-btn i { color: var(--accent); font-size: 16px; width: 20px; text-align: center; }
+  .start-chat-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 14px; background: var(--accent); color: #0a0a0f; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; transition: all 0.25s; box-shadow: 0 0 24px var(--accent-glow); }
+  .start-chat-btn:hover { transform: translateY(-2px); box-shadow: 0 0 36px var(--accent-glow); }
+  .session-rename-input { flex: 1; background: var(--bg-secondary); border: 1px solid var(--accent); color: var(--fg); font-family: inherit; font-size: 13px; border-radius: 6px; padding: 4px 8px; outline: none; min-width: 0; }
+  .edit-session { background: none; border: none; color: var(--muted); cursor: pointer; opacity: 0; font-size: 12px; transition: opacity 0.2s, color 0.2s; padding: 0 4px; }
+  .session-item:hover .edit-session { opacity: 1; } .edit-session:hover { color: var(--accent); }
+  .session-actions { display: flex; align-items: center; flex-shrink: 0; }
 
   .msg-row { display: flex; gap: 10px; animation: msgIn 0.35s ease-out; } .msg-row.user { flex-direction: row-reverse; }
   @keyframes msgIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -209,13 +214,14 @@
       <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-icon"><i class="fas fa-bolt"></i></div>
         <h1 class="welcome-title">Welcome to Quorix<span>AI</span></h1>
-        <p class="welcome-sub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.</p>
-        <div class="quick-actions">
+        <p class="welcome-sub" id="welcomeSub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.</p>
+        <div class="quick-actions" id="quickActions">
           <button class="quick-btn" onclick="quickAction('Tell me about the Roman Empire')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
           <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fas fa-code"></i> Build Code</button>
           <button class="quick-btn" onclick="quickAction('What is the weather right now?')"><i class="fas fa-cloud-sun"></i> Weather</button>
           <button class="quick-btn" onclick="quickAction('Show me images of mountains')"><i class="fas fa-images"></i> Images</button>
         </div>
+        <button class="start-chat-btn" id="startChatBtn" onclick="createNewSession()" style="display:none;"><i class="fas fa-plus"></i> Create a new chat to begin</button>
       </div>
     </main>
     <div class="input-area">
@@ -276,23 +282,32 @@
       sessions = {};
     }
     activeSessionId = localStorage.getItem(ACTIVE_KEY);
+    // Only restore an active session if it still exists. Do NOT auto-create one —
+    // on first login the user must create a new chat before they can ask a question.
     if (!activeSessionId || !sessions[activeSessionId]) {
-      createNewSession(false);
+      activeSessionId = null;
     }
     renderChat();
   }
 
   function saveSessions() {
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-    localStorage.setItem(ACTIVE_KEY, activeSessionId);
+    if (activeSessionId) {
+      localStorage.setItem(ACTIVE_KEY, activeSessionId);
+    } else {
+      localStorage.removeItem(ACTIVE_KEY);
+    }
   }
 
   function createNewSession(switchTo = true) {
     const id = 'sess_' + Date.now();
-    const name = new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const existing = Object.keys(sessions).length;
+    const name = 'New Chat ' + (existing + 1);
     sessions[id] = { name, messages: [] };
     if (switchTo) {
       switchSession(id);
+      closeSidebar();
+      document.getElementById('userInput').focus();
     } else {
       saveSessions();
       renderSessionList();
@@ -311,9 +326,8 @@
     e.stopPropagation();
     delete sessions[id];
     if (activeSessionId === id) {
-      const keys = Object.keys(sessions);
-      if (keys.length > 0) activeSessionId = keys[0];
-      else createNewSession(false);
+      // Don't auto-create — leave the user on the "create a chat" screen if none remain.
+      activeSessionId = null;
     }
     saveSessions();
     rebuildCodeStore();
@@ -336,14 +350,49 @@
       const count = (s.messages || []).length;
       const div = document.createElement('div');
       div.className = `session-item ${id === activeSessionId ? 'active' : ''}`;
-      div.onclick = () => switchSession(id);
-      div.innerHTML = `<span class="session-name"><i class="fas fa-message" style="margin-right:8px;font-size:11px;"></i>${escapeHTML(s.name)}</span><button class="del-session" onclick="deleteSession('${id}', event)" title="Delete chat"><i class="fas fa-times"></i></button>`;
+      div.onclick = (e) => { if (!e.target.closest('.session-actions') && !e.target.closest('.session-rename-input')) switchSession(id); };
+      div.innerHTML = `<span class="session-name"><i class="fas fa-message" style="margin-right:8px;font-size:11px;"></i>${escapeHTML(s.name)}</span><div class="session-actions"><button class="edit-session" onclick="startRename('${id}', event)" title="Rename chat"><i class="fas fa-pen"></i></button><button class="del-session" onclick="deleteSession('${id}', event)" title="Delete chat"><i class="fas fa-times"></i></button></div>`;
       list.appendChild(div);
     });
   }
 
   function getActiveMessages() {
     return sessions[activeSessionId]?.messages || [];
+  }
+
+  function startRename(id, e) {
+    e.stopPropagation();
+    const item = e.target.closest('.session-item');
+    if (!item) return;
+    const nameSpan = item.querySelector('.session-name');
+    if (!nameSpan || item.querySelector('.session-rename-input')) return;
+    const current = sessions[id]?.name || '';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'session-rename-input';
+    input.value = current;
+    input.maxLength = 60;
+    nameSpan.replaceWith(input);
+    input.focus();
+    input.select();
+
+    const commit = (save) => {
+      if (input._done) return;
+      input._done = true;
+      if (save) {
+        const val = input.value.trim();
+        if (val) sessions[id].name = val;
+      }
+      saveSessions();
+      renderSessionList();
+    };
+    input.addEventListener('keydown', (ev) => {
+      ev.stopPropagation();
+      if (ev.key === 'Enter') { ev.preventDefault(); commit(true); }
+      else if (ev.key === 'Escape') { ev.preventDefault(); commit(false); }
+    });
+    input.addEventListener('blur', () => commit(true));
+    input.addEventListener('click', (ev) => ev.stopPropagation());
   }
 
   /* ============================================
@@ -364,20 +413,49 @@
      CHAT RENDERING
      ============================================ */
   function renderChat() {
+    updateInputState();
     const area = document.getElementById('chatArea');
     area.querySelectorAll('.msg-row').forEach(el => el.remove());
-    const msgs = getActiveMessages();
-    if (msgs.length === 0) {
-      document.getElementById('welcomeScreen').style.display = 'flex';
+
+    const welcome = document.getElementById('welcomeScreen');
+    const sub = document.getElementById('welcomeSub');
+    const quick = document.getElementById('quickActions');
+    const startBtn = document.getElementById('startChatBtn');
+
+    // No active session: prompt the user to create a chat before asking anything.
+    if (!activeSessionId) {
+      welcome.style.display = 'flex';
+      sub.textContent = 'Create a new chat to start asking questions. Your conversations are saved locally and you can rename them anytime from the Chats menu.';
+      quick.style.display = 'none';
+      startBtn.style.display = 'inline-flex';
       return;
     }
-    document.getElementById('welcomeScreen').style.display = 'none';
+
+    const msgs = getActiveMessages();
+    if (msgs.length === 0) {
+      welcome.style.display = 'flex';
+      sub.textContent = 'Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.';
+      quick.style.display = 'grid';
+      startBtn.style.display = 'none';
+      return;
+    }
+    welcome.style.display = 'none';
     msgs.forEach(msg => {
       const el = createMsgElement(msg);
       area.appendChild(el);
       bindInteractiveEls(el);
     });
     scrollToBottom();
+  }
+
+  // Enable the composer only when a chat exists; otherwise force a new chat first.
+  function updateInputState() {
+    const input = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const hasSession = !!activeSessionId;
+    input.disabled = !hasSession;
+    sendBtn.disabled = !hasSession || isProcessing;
+    input.placeholder = hasSession ? 'Ask QuorixAI anything...' : 'Create a new chat to start asking questions...';
   }
 
   function createMsgElement(msg) {
@@ -474,6 +552,11 @@
 
   async function sendMessage() {
     if (isProcessing) return;
+    if (!activeSessionId) {
+      showToast('Create a new chat first to start asking questions.', 'error');
+      toggleSidebar();
+      return;
+    }
     const input = document.getElementById('userInput');
     const text = input.value.trim();
     if (!text) return;
@@ -482,7 +565,8 @@
     input.style.height = 'auto';
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    if (getActiveMessages().length === 0) {
+    // Auto-title from the first question, but only if the user hasn't renamed it.
+    if (getActiveMessages().length === 0 && /^New Chat \d+$/.test(sessions[activeSessionId].name || '')) {
       sessions[activeSessionId].name = text.substring(0, 25) + (text.length > 25 ? '...' : '');
       renderSessionList();
     }
@@ -555,10 +639,15 @@
     }
 
     isProcessing = false;
-    document.getElementById('sendBtn').disabled = false;
+    updateInputState();
   }
 
   function quickAction(text) {
+    if (!activeSessionId) {
+      showToast('Create a new chat first to start asking questions.', 'error');
+      toggleSidebar();
+      return;
+    }
     document.getElementById('userInput').value = text;
     sendMessage();
   }
