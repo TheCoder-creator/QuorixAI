@@ -585,6 +585,9 @@
       let result;
 
       switch (intent.type) {
+        case 'chat':
+          result = await handleChat(intent.query);
+          break;
         case 'weather':
           result = await handleWeather();
           break;
@@ -595,8 +598,7 @@
           result = await handleGithub(intent.query);
           break;
         case 'wiki':
-        default:
-          result = await handleWiki(intent.query || text);
+          result = await handleWiki(intent.query);
           break;
       }
 
@@ -655,39 +657,38 @@
   /* ============================================
      INTENT DETECTION
      ============================================ */
+  /* ============================================
+     INTENT DETECTION
+     ============================================ */
   function detectIntent(text) {
-    const lower = text.toLowerCase();
+    const lower = text.toLowerCase().trim();
 
+    // 1. Weather
     if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
       return { type: 'weather' };
     }
 
-    const imgMatch = lower.match(
-      /(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i
-    );
-    const imgDirect = lower.match(
-      /(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i
-    );
+    // 2. Images (Must be strict so it doesn't trigger on normal chat)
+    const imgMatch = lower.match(/\b(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
     if (imgMatch) {
       return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
     }
-    if (imgDirect && !/\b(tell|explain|what|who|how|why|when|where|is|are|was|were|do|does|did)\b/i.test(lower.substring(0, lower.indexOf(imgDirect[0])))) {
-      return { type: 'images', query: imgDirect[1].replace(/[.!?]+$/, '').trim() };
-    }
 
-    const ghMatch = lower.match(
-      /(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i
-    );
+    // 3. Code (Must start the sentence or be a direct command)
+    const ghMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
     if (ghMatch) {
       return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
     }
 
-    const wikiQuery = lower
-      .replace(/\b(tell\s+me\s+about|who\s+is|what\s+(is|are)|explain|describe|about|define|info(?:rmation)?\s+(?:on|about))\b/gi, '')
-      .trim();
-    return { type: 'wiki', query: wikiQuery || text };
-  }
+    // 4. Wikipedia (Explicit "Tell me about", "Who is", "What is")
+    const wikiMatch = lower.match(/\b(?:tell\s+me\s+about|who\s+is|what\s+(?:is|are)|explain|describe|define|info(?:rmation)?\s+(?:on|about))\b\s+(.+)/i);
+    if (wikiMatch) {
+      return { type: 'wiki', query: wikiMatch[1].replace(/[.!?]+$/, '').trim() };
+    }
 
+    // 5. Fallback: General Chatbot (handles greetings, opinions, math, logic, etc.)
+    return { type: 'chat', query: text };
+  }
   /* ============================================
      STREAMING (handles HTML tags properly)
      ============================================ */
@@ -800,7 +801,41 @@ ${bodyContent}
      HANDLERS
      ============================================ */
 
-  // --- Wikipedia ---
+  /* ============================================
+     CHATBOT API (Pollinations.AI - No Key Needed)
+     ============================================ */
+  async function handleChat(query) {
+    const systemPrompt = `You are QuorixAI, a helpful, concise local AI assistant. 
+You provide friendly, straightforward answers. 
+You DO NOT have access to live weather, code generation, or image search tools in this mode. 
+If the user asks for those specifically, politely inform them to use the quick action buttons or phrase their request explicitly (e.g., "Tell me about..." for Wikipedia, "Code a..." for code generation).`;
+
+    // Using Pollinations text generation API (Open-source models, no auth required)
+    const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(query)}?system=${encodeURIComponent(systemPrompt)}&model=openai`;
+    
+    try {
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error('Chatbot service is currently unavailable.');
+      
+      // The API returns raw text
+      const text = await res.text();
+      
+      if (!text || text.trim().length === 0) {
+        return { html: `<p>I'm not sure how to respond to that. Could you try rephrasing?</p>` };
+      }
+
+      // Format the plain text response into nice HTML paragraphs
+      const formattedHtml = text.split('\n')
+        .filter(line => line.trim().length > 0)
+        .map(line => `<p>${escapeHTML(line)}</p>`)
+        .join('');
+
+      return { html: formattedHtml };
+    } catch (err) {
+      return { html: `<p>Sorry, I couldn't connect to the chatbot API. ${escapeHTML(err.message)}</p>` };
+    }
+  }  
+// --- Wikipedia ---
   async function handleWiki(query) {
     const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`;
     const searchData = await (await fetch(searchUrl)).json();
