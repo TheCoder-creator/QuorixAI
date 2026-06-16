@@ -350,7 +350,7 @@
   }
 
   async function handleImages(query) {
-    const apiKey = getPexelsKey();
+    const apiKey = "QmebQALowGk9LoYQqUGaPhQ5zUMQWwd1mRaFTV4HvNQyYS1i6v9H5V68"
     if (!apiKey) return `<p>Add a Pexels API key in <strong>Settings</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
     const data = await (await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6`, { headers: { Authorization: apiKey } })).json();
     if (!data.photos?.length) return `<p>No images for <strong>${escapeHTML(query)}</strong>.</p><div class="source-badge pexels"><i class="fas fa-images"></i> Pexels</div>`;
