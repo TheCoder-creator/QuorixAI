@@ -361,6 +361,8 @@ async function handleGroqChat(query) {
 }
 
 // 4. Code Generation Handler
+// FIXED: Returns { html, codeId, codeData } shape so sendMessage()/streamText()
+// doesn't crash with "Cannot read properties of undefined (reading 'length')".
 async function handleGroqCode(query) {
   const prompt = `
 Write a complete HTML file for:
@@ -371,13 +373,20 @@ Return ONLY code.
 
   const code = await getAIResponse(prompt);
 
-  // existing code panel logic goes here
-  // For example:
-  // document.getElementById('code-panel').innerHTML = code;
-  // or render it inside an iframe
-  
-  return code;
-}  
+  // Store the generated code so the side-panel "Run" button can execute it
+  const codeId = 'code_groq_' + Date.now();
+  const codeData = { content: code, name: `quorix_${Date.now()}.html` };
+  codeStore[codeId] = codeData;
+
+  return {
+    html: `<p>Here's the code I generated for <strong>${escapeHTML(query)}</strong>. Click below to view and run it.</p>
+           <button class="view-panel-btn" data-code-id="${codeId}">
+             <i class="fas fa-expand"></i> View Full HTML &amp; Run
+           </button>`,
+    codeId,
+    codeData
+  };
+}
   function init() {
     loadSessions();
     rebuildCodeStore();
