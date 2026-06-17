@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuorixAI 1.2</title>
+<title>QuorixAI</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -203,7 +203,7 @@
     <header class="app-header">
       <div class="logo-group">
         <div class="logo-icon">Q</div>
-        <div class="logo-text">Quorix 1.2<span></span></div>
+        <div class="logo-text">Quorix<span>AI</span></div>
       </div>
       <div class="header-actions">
         <button class="chats-btn" onclick="toggleSidebar()" title="View saved chats"><i class="fas fa-comments"></i> <span>Chats</span></button>
@@ -226,7 +226,7 @@
     </main>
     <div class="input-area">
       <div class="input-wrapper">
-        <textarea id="userInput" rows="1" placeholder="Ask Quorix 1.2 anything..." aria-label="Message input"></textarea>
+        <textarea id="userInput" rows="1" placeholder="Ask QuorixAI anything..." aria-label="Message input"></textarea>
         <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
       </div>
     </div>
@@ -598,7 +598,8 @@
           result = await handleGithub(intent.query);
           break;
         case 'wiki':
-          result = await handleWiki(intent.query);
+        default:
+          result = await handleWiki(intent.query || text);
           break;
       }
 
@@ -663,32 +664,46 @@
   function detectIntent(text) {
     const lower = text.toLowerCase().trim();
 
-    // 1. Weather
+    // 1. Check for conversational/chatbot vibes first
+    const chatPatterns = [
+      { type: 'chat', category: 'greeting', regex: /^(hi|hello|hey|yo|howdy|sup|greetings)\b/i },
+      { type: 'chat', category: 'howareyou', regex: /how are you|how's it going|how are things|what's up/i },
+      { type: 'chat', category: 'identity', regex: /who are you|what are you|what is your name|who made you|who created you/i },
+      { type: 'chat', category: 'capabilities', regex: /what can you do|help me|how do you work|what do you do/i },
+      { type: 'chat', category: 'thanks', regex: /thanks|thank you|thx|appreciate it/i },
+      { type: 'chat', category: 'bye', regex: /bye|goodbye|see ya|farewell|later/i }
+    ];
+
+    for (let p of chatPatterns) {
+      if (p.regex.test(lower)) {
+        return { type: 'chat', category: p.category, query: text };
+      }
+    }
+
+    // 2. Check for Weather
     if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
       return { type: 'weather' };
     }
 
-    // 2. Images (Must be strict so it doesn't trigger on normal chat)
-    const imgMatch = lower.match(/\b(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
-    if (imgMatch) {
-      return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
+    // 3. Check for Images
+    const imgMatch = lower.match(/(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
+    const imgDirect = lower.match(/(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
+    if (imgMatch) return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
+    if (imgDirect && !/\b(tell|explain|what|who|how|why|when|where|is|are|was|were|do|does|did)\b/i.test(lower.substring(0, lower.indexOf(imgDirect[0])))) {
+      return { type: 'images', query: imgDirect[1].replace(/[.!?]+$/, '').trim() };
     }
 
-    // 3. Code (Must start the sentence or be a direct command)
-    const ghMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
-    if (ghMatch) {
-      return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
-    }
+    // 4. Check for Code Generation
+    const ghMatch = lower.match(/(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
+    if (ghMatch) return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
 
-    // 4. Wikipedia (Explicit "Tell me about", "Who is", "What is")
-    const wikiMatch = lower.match(/\b(?:tell\s+me\s+about|who\s+is|what\s+(?:is|are)|explain|describe|define|info(?:rmation)?\s+(?:on|about))\b\s+(.+)/i);
-    if (wikiMatch) {
-      return { type: 'wiki', query: wikiMatch[1].replace(/[.!?]+$/, '').trim() };
-    }
-
-    // 5. Fallback: General Chatbot (handles greetings, opinions, math, logic, etc.)
-    return { type: 'chat', query: text };
+    // 5. Default to Wikipedia
+    const wikiQuery = lower
+      .replace(/\b(tell\s+me\s+about|who\s+is|what\s+(is|are)|explain|describe|about|define|info(?:rmation)?\s+(?:on|about))\b/gi, '')
+      .trim();
+    return { type: 'wiki', query: wikiQuery || text };
   }
+
   /* ============================================
      STREAMING (handles HTML tags properly)
      ============================================ */
@@ -802,40 +817,80 @@ ${bodyContent}
      ============================================ */
 
   /* ============================================
-     CHATBOT API (Pollinations.AI - No Key Needed)
+     100% LOCAL CHATBOT ENGINE (No API/No DB)
      ============================================ */
   async function handleChat(query) {
-    const systemPrompt = `You are QuorixAI, a helpful, concise local AI assistant. 
-You provide friendly, straightforward answers. 
-You DO NOT have access to live weather, code generation, or image search tools in this mode. 
-If the user asks for those specifically, politely inform them to use the quick action buttons or phrase their request explicitly (e.g., "Tell me about..." for Wikipedia, "Code a..." for code generation).`;
+    const lower = query.toLowerCase().trim();
+    let html = '';
 
-    // Using Pollinations text generation API (Open-source models, no auth required)
-    const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(query)}?system=${encodeURIComponent(systemPrompt)}&model=openai`;
-    
-    try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error('Chatbot service is currently unavailable.');
-      
-      // The API returns raw text
-      const text = await res.text();
-      
-      if (!text || text.trim().length === 0) {
-        return { html: `<p>I'm not sure how to respond to that. Could you try rephrasing?</p>` };
+    // 1. Greetings
+    if (/^(hi|hello|hey|yo|howdy|sup|greetings|good morning|good afternoon|good evening)\b/i.test(lower)) {
+      const responses = [
+        "Hello there! 👋 How can I assist you today?",
+        "Hey! What can I do for you?",
+        "Hi! I'm ready to help. Ask me to search Wikipedia, write some code, or check the weather.",
+        "Greetings! How can I help?"
+      ];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } 
+    // 2. How are you
+    else if (/how are you|how's it going|how are things|what's up|how do you do/i.test(lower)) {
+      html = `<p>I'm running at 100% locally in your browser, so I feel great! ⚡ How about you? What can I help you with?</p>`;
+    } 
+    // 3. Identity & Version
+    else if (/who are you|what are you|what is your name|who made you|who created you|what version/i.test(lower)) {
+      html = `<p>I am <strong>Quorix 1.1b</strong>. I'm a local AI assistant built entirely with JavaScript. I don't use external APIs for chatting, but I can fetch info from Wikipedia, generate code, check the weather, and find images!</p>`;
+    } 
+    // 4. Capabilities
+    else if (/what can you do|help me|how do you work|what do you do|help$/i.test(lower)) {
+      html = `<p>Here is what I can do right inside your browser:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>Wikipedia Search:</strong> Ask me "Tell me about black holes".</li>
+                <li><strong>Code Generation:</strong> Ask me "Code a snake game".</li>
+                <li><strong>Weather Forecasts:</strong> Ask me "What's the weather right now?"</li>
+                <li><strong>Images:</strong> Ask me "Show me pictures of mountains".</li>
+                <li><strong>Chat:</strong> I can say hi, tell you about myself, and do basic math!</li>
+              </ul>`;
+    } 
+    // 5. Thanks
+    else if (/thanks|thank you|thx|appreciate it|cheers/i.test(lower)) {
+      const responses = [
+        "You're very welcome! 😊",
+        "Anytime! Let me know if you need anything else.",
+        "Happy to help! 🚀"
+      ];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } 
+    // 6. Goodbye
+    else if (/bye|goodbye|see ya|farewell|later|gtg/i.test(lower)) {
+      const responses = [
+        "Goodbye! Have a great day. 👋",
+        "See you later! I'll be right here when you need me.",
+        "Until next time!"
+      ];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } 
+    // 7. Basic Math (evaluates simple math equations safely)
+    else if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(lower)) {
+      try {
+        const result = eval(lower);
+        html = `<p>The answer to <strong>${escapeHTML(lower)}</strong> is <strong>${result}</strong>.</p>`;
+      } catch {
+        html = `<p>That doesn't look like a valid math problem. Try something like "12 * 5".</p>`;
       }
-
-      // Format the plain text response into nice HTML paragraphs
-      const formattedHtml = text.split('\n')
-        .filter(line => line.trim().length > 0)
-        .map(line => `<p>${escapeHTML(line)}</p>`)
-        .join('');
-
-      return { html: formattedHtml };
-    } catch (err) {
-      return { html: `<p>Sorry, I couldn't connect to the chatbot API. ${escapeHTML(err.message)}</p>` };
+    } 
+    // 8. Conversational Fallback
+    else {
+      html = `<p>I'm not quite sure how to respond to that conversationally, but I can look it up for you! Try asking me to "Tell me about..." or "Explain..." and I'll search Wikipedia for you.</p>`;
     }
-  }  
-// --- Wikipedia ---
+
+    // Simulate a tiny bit of "thinking" delay so the typing dots show up briefly
+    await new Promise(r => setTimeout(r, 500));
+    
+    return { html };
+  }
+
+    // --- Wikipedia ---
   async function handleWiki(query) {
     const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`;
     const searchData = await (await fetch(searchUrl)).json();
