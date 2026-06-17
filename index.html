@@ -773,7 +773,7 @@ Return ONLY code.
     // 2. Check for Code Generation Request
     const codeMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+|an\s+)?(.+)/i);
     if (codeMatch) {
-      return await handlePollinationsCode(codeMatch[1].replace(/[.!?]+$/, '').trim());
+      return await handleGroqCode(codeMatch[1].replace(/[.!?]+$/, '').trim());
     }
 
     // 3. Fallback to Pollinations General Chat API
