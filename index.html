@@ -263,6 +263,121 @@
   let currentRawCode = '';
   let codeStore = {};
 
+const GROQ_API_KEY = "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";
+
+// Utility function to prevent XSS attacks when rendering HTML
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
+// 1. Core Groq API Call
+async function callGroq(prompt) {
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Groq API failed");
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+// 2. GitHub Fallback Search
+async function searchGithub(query) {
+  const res = await fetch(
+    `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc`
+  );
+
+  const data = await res.json();
+
+  if (!data.items?.length) {
+    return null;
+  }
+
+  return data.items[0];
+}
+
+// Unified wrapper to handle Groq -> GitHub Fallback
+async function getAIResponse(prompt) {
+  try {
+    const answer = await callGroq(prompt);
+    return answer;
+  } catch (error) {
+    console.error("Groq failed, falling back to GitHub:", error.message);
+    const repo = await searchGithub(prompt);
+
+    if (repo) {
+      return `
+Found a popular GitHub project:
+
+ ${repo.full_name}
+
+⭐ ${repo.stargazers_count} stars
+
+ ${repo.description}
+
+ ${repo.html_url}
+`;
+    }
+
+    return "Groq unavailable and no GitHub results found.";
+  }
+}
+
+// 3. Chat Handler (Replaces handlePollinationsChat)
+async function handleGroqChat(query) {
+  const text = await getAIResponse(query);
+
+  return {
+    html: `<p>${escapeHTML(text)}</p>`
+  };
+}
+
+// 4. Code Generation Handler
+async function handleGroqCode(query) {
+  const prompt = `
+Write a complete HTML file for:
+ ${query}
+
+Return ONLY code.
+`;
+
+  const code = await getAIResponse(prompt);
+
+  // existing code panel logic goes here
+  // For example:
+  // document.getElementById('code-panel').innerHTML = code;
+  // or render it inside an iframe
+  
+  return code;
+}  
   function init() {
     loadSessions();
     rebuildCodeStore();
@@ -662,59 +777,9 @@
     }
 
     // 3. Fallback to Pollinations General Chat API
-    return await handlePollinationsChat(text);
+    return await handleGroqChat(text);
   }
 
-  async function handlePollinationsChat(query) {
-    const systemPrompt = `You are QuorixAI version 1.2b, a fast and helpful AI assistant. 
-Keep your answers concise and conversational. 
-You DO NOT have access to live weather, code generation, or image search tools in this chat mode. 
-If the user asks for those specifically, tell them to phrase it explicitly (e.g., "Tell me about..." for Wikipedia, "Code a..." for code generation).`;
-
-    const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(query)}?system=${encodeURIComponent(systemPrompt)}&model=openai`;
-    
-    try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error('Chatbot service is currently unavailable.');
-      const text = await res.text();
-      if (!text || text.trim().length === 0) {
-        return { html: `<p>I'm not sure how to respond to that. Could you try rephrasing?</p>` };
-      }
-      const formattedHtml = text.split('\n').filter(line => line.trim().length > 0).map(line => `<p>${escapeHTML(line)}</p>`).join('');
-      return { html: formattedHtml };
-    } catch (err) {
-      return { html: `<p>Sorry, I couldn't connect to the chatbot API. ${escapeHTML(err.message)}</p>` };
-    }
-  }
-
-  async function handlePollinationsCode(query) {
-    try {
-      showToast('Generating code via Pollinations 1.2b...', 'success');
-      const prompt = `Write a complete, single-file HTML document with inline CSS and vanilla JS for: ${query}. Only return the raw HTML code, starting with <!DOCTYPE html>. Do not include markdown backticks or explanations.`;
-      const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
-      
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error('Code generation service is currently unavailable.');
-      
-      let rawHtml = await res.text();
-      // Clean up markdown if the model added it despite instructions
-      rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, '').trim();
-
-      if (!rawHtml || !rawHtml.includes('<')) {
-        return { html: `<p>I couldn't generate valid code for that. Please try rephrasing your request.</p>` };
-      }
-
-      const fullHTML = wrapAsFullHTML(rawHtml, 'generated_code.html');
-      const codeId = 'code_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-      const codeData = { content: fullHTML, name: 'generated_code.html' };
-      codeStore[codeId] = codeData;
-
-      const chatHtml = `<p>Here is the code for <strong>${escapeHTML(query)}</strong>. It's open in the side panel — hit <strong>Run Code</strong> to preview it.</p><button class="view-panel-btn" data-code-id="${codeId}"><i class="fas fa-expand"></i> View Full HTML & Run</button>`;
-      return { html: chatHtml, codeId, codeData };
-    } catch (err) {
-      return { html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>` };
-    }
-  }
 
   /* ============================================
      MODEL 1.1b LOGIC (Local Fallback)
