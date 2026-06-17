@@ -103,6 +103,23 @@
   .view-panel-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 16px; border-radius: 8px; background: rgba(88,166,255,0.1); color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.2s; }
   .view-panel-btn:hover { background: rgba(88,166,255,0.2); border-color: #58a6ff; }
 
+  /* === Quorix 1.3b Markdown rendering === */
+  .msg-content .md-h { color: var(--fg); font-weight: 600; margin: 12px 0 6px; line-height: 1.3; }
+  .msg-content .md-h:first-child { margin-top: 0; }
+  .msg-content h1.md-h { font-size: 1.4em; }
+  .msg-content h2.md-h { font-size: 1.25em; }
+  .msg-content h3.md-h { font-size: 1.1em; }
+  .msg-content h4.md-h { font-size: 1em; }
+  .msg-content .md-inline-code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: rgba(0,230,138,0.1); color: var(--accent); padding: 1px 5px; border-radius: 4px; }
+  .msg-content .md-code-block { position: relative; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 14px; margin: 10px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.55; color: #d6deeb; }
+  .msg-content .md-code-block code { background: none; padding: 0; color: inherit; }
+  .msg-content .md-code-lang { display: inline-block; position: absolute; top: 6px; right: 10px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .msg-content .md-quote { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; margin: 8px 0; color: var(--muted); font-style: italic; }
+  .msg-content .md-ul, .msg-content .md-ol { margin: 8px 0 8px 22px; }
+  .msg-content .md-ul li { list-style: disc; margin-bottom: 4px; }
+  .msg-content .md-ol li { list-style: decimal; margin-bottom: 4px; }
+  .msg-content a { color: #58a6ff; text-decoration: underline; word-break: break-all; }
+
   .typing-dots { display: flex; gap: 5px; padding: 4px 0; }
   .typing-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: typeBounce 1.4s ease-in-out infinite; }
   .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -209,9 +226,10 @@
       </div>
       <div class="header-actions">
         <div class="dropdown">
-          <button class="chats-btn" onclick="toggleModelMenu()" title="Select AI Model"><i class="fas fa-microchip"></i> <span id="activeModelText">Quorix 1.2b</span> <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.6;"></i></button>
+          <button class="chats-btn" onclick="toggleModelMenu()" title="Select AI Model"><i class="fas fa-microchip"></i> <span id="activeModelText">Quorix 1.3b</span> <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.6;"></i></button>
           <div class="dropdown-menu" id="modelMenu">
-            <button class="dropdown-item" onclick="switchModel('1.2b')"><i class="fas fa-rocket"></i> Quorix 1.2b (Code & Chat)</button>
+            <button class="dropdown-item" onclick="switchModel('1.3b')"><i class="fas fa-bolt"></i> Quorix 1.3b (Advanced) <span style="margin-left:auto;font-size:9px;color:var(--accent);">CURRENT</span></button>
+            <button class="dropdown-item" onclick="switchModel('1.2b')"><i class="fas fa-rocket"></i> Quorix 1.2b (Code &amp; Chat)</button>
             <button class="dropdown-item" onclick="switchModel('1.1b')"><i class="fas fa-shield-alt"></i> Quorix 1.1b (Local Fallback)</button>
           </div>
         </div>
@@ -223,7 +241,7 @@
       <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-icon"><i class="fas fa-bolt"></i></div>
         <h1 class="welcome-title">Welcome to Quorix<span>AI</span></h1>
-        <p class="welcome-sub" id="welcomeSub">Currently running <strong>Quorix 1.2b</strong>. An advanced model capable of code generation, general chat, Wikipedia searches, and image fetching.</p>
+        <p class="welcome-sub" id="welcomeSub">Currently running <strong>Quorix 1.3b</strong>. An advanced model with deeper reasoning, richer Markdown rendering, and improved code generation.</p>
         <div class="quick-actions" id="quickActions">
           <button class="quick-btn" onclick="quickAction('Tell me about the Roman Empire')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
           <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fas fa-code"></i> Build Code</button>
@@ -235,7 +253,7 @@
     </main>
     <div class="input-area">
       <div class="input-wrapper">
-        <textarea id="userInput" rows="1" placeholder="Ask Quorix 1.2b anything..." aria-label="Message input"></textarea>
+        <textarea id="userInput" rows="1" placeholder="Ask Quorix 1.3b anything..." aria-label="Message input"></textarea>
         <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
       </div>
     </div>
@@ -249,7 +267,7 @@
   const SUPABASE_URL = 'https://eekwlctegngxdzannddi.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_YhaRLUgoEVB6iFTMJRwwEw_Bi7v-Qnq';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let activeModel = '1.2b'; // Default model is now 1.2b
+  let activeModel = '1.3b'; // Default model is now 1.3b (Advanced)
 
   /* ============================================
      STORAGE KEYS & GLOBAL STATE
@@ -420,43 +438,14 @@ Return ONLY code.
     }
   });
 
-  async function switchModel(model) {
-    activeModel = model;
-    document.getElementById('activeModelText').textContent = `Quorix ${model}`;
+  // Model menu items now redirect to standalone Quorix model pages.
+  // Each model lives at its own URL on horizensearch.com.
+  function switchModel(model) {
+    const url = `https://quorix.horizensearch.com/${model}`;
     document.getElementById('modelMenu').classList.remove('active');
-    
-    // If switching to 1.1b, fetch its specific HTML payload from Supabase
-    if (model === '1.1b') {
-      showToast(`Loading Quorix 1.1b environment...`, 'success');
-      try {
-        const { data, error } = await supabaseClient
-          .from('quorix_models')
-          .select('code_content, file_name')
-          .eq('model_name', '1.1b')
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          // Run the 1.1b config code directly in the panel
-          currentRawCode = data.code_content;
-          document.getElementById('panelFileName').textContent = data.file_name || 'quorix_1.1b.html';
-          document.getElementById('runCodeBtn').style.display = 'flex';
-          document.getElementById('panelPreview').classList.remove('active');
-          document.getElementById('panelCode').style.display = 'block';
-          document.getElementById('codePanel').classList.add('open');
-          document.getElementById('chatColumn').classList.add('panel-open');
-          streamPanelCode(data.code_content);
-        }
-      } catch (err) {
-        showToast(`Database error: ${err.message}`, 'error');
-      }
-    } else {
-      // Switching back to 1.2b closes the panel
-      closeCodePanel();
-    }
-    
-    updateInputState();
-    document.getElementById('welcomeSub').textContent = `Currently running Quorix ${model}. Ask me to generate code, chat, search Wikipedia, or check the weather.`;
+    showToast(`Redirecting to Quorix ${model}...`, 'success');
+    // Small delay so the toast is visible before the page unloads.
+    setTimeout(() => { window.location.href = url; }, 400);
   }
 
   function loadSessions() {
@@ -706,7 +695,9 @@ Return ONLY code.
 
     try {
       let result;
-      if (activeModel === '1.2b') {
+      if (activeModel === '1.3b') {
+        result = await handleQuorix1_3b(text); // Advanced Groq + Markdown
+      } else if (activeModel === '1.2b') {
         result = await handleQuorix1_2b(text); // Code & Chat API
       } else {
         result = await handleQuorix1_1b(text); // Local Fallback
@@ -760,6 +751,176 @@ Return ONLY code.
     }
     document.getElementById('userInput').value = text;
     sendMessage();
+  }
+
+  /* ============================================
+     MODEL 1.3b LOGIC (Advanced Groq + Markdown + Tools)
+     ============================================ */
+
+  // Minimal, safe Markdown -> HTML converter.
+  // Escapes first, then re-applies a small whitelist of Markdown rules.
+  function renderMarkdown(md) {
+    if (!md) return '';
+    // 1. Escape everything to neutralize XSS.
+    let s = escapeHTML(String(md));
+
+    // 2. Fenced code blocks: ```lang\n...\n```
+    s = s.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+      const langLabel = lang ? `<span class="md-code-lang">${lang}</span>` : '';
+      return `<pre class="md-code-block">${langLabel}<code>${code.replace(/\n$/, '')}</code></pre>`;
+    });
+
+    // 3. Inline code: `...`
+    s = s.replace(/`([^`\n]+)`/g, '<code class="md-inline-code">$1</code>');
+
+    // 4. Headings (# .. ####)
+    s = s.replace(/^####\s+(.+)$/gm, '<h4 class="md-h">$1</h4>');
+    s = s.replace(/^###\s+(.+)$/gm, '<h3 class="md-h">$1</h3>');
+    s = s.replace(/^##\s+(.+)$/gm, '<h2 class="md-h">$1</h2>');
+    s = s.replace(/^#\s+(.+)$/gm, '<h1 class="md-h">$1</h1>');
+
+    // 5. Bold / italic
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+
+    // 6. Blockquotes
+    s = s.replace(/^&gt;\s?(.+)$/gm, '<blockquote class="md-quote">$1</blockquote>');
+
+    // 7. Unordered lists
+    s = s.replace(/(?:^|\n)((?:-\s+.+(?:\n|$))+)/g, (block) => {
+      const items = block.trim().split(/\n/).map(l => l.replace(/^\s*-\s+/, '')).map(l => `<li>${l}</li>`).join('');
+      return `\n<ul class="md-ul">${items}</ul>\n`;
+    });
+
+    // 8. Ordered lists
+    s = s.replace(/(?:^|\n)((?:\d+\.\s+.+(?:\n|$))+)/g, (block) => {
+      const items = block.trim().split(/\n/).map(l => l.replace(/^\s*\d+\.\s+/, '')).map(l => `<li>${l}</li>`).join('');
+      return `\n<ol class="md-ol">${items}</ol>\n`;
+    });
+
+    // 9. Paragraph breaks
+    s = s.replace(/\n\n+/g, '</p><p>');
+    s = `<p>${s}</p>`;
+    // Clean up empty <p> tags that wrapped block elements
+    s = s.replace(/<p>\s*(<\/? (?:h[1-4]|ul|ol|pre|blockquote)[^>]*>)/g, '$1');
+    s = s.replace(/(<\/(?:h[1-4]|ul|ol|pre|blockquote)>)\s*<\/p>/g, '$1');
+    return s;
+  }
+
+  // Groq call WITH a system prompt (used by 1.3b for richer reasoning).
+  async function callGroqAdvanced(userPrompt, { systemPrompt, temperature = 0.6, maxTokens = 2048 } = {}) {
+    const messages = [];
+    if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+    messages.push({ role: 'user', content: userPrompt });
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages,
+        temperature,
+        max_tokens: maxTokens
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      throw new Error(`Groq API failed (${response.status}): ${errText.slice(0, 200)}`);
+    }
+
+    const data = await response.json();
+    if (!data?.choices?.length) throw new Error('Groq returned no choices');
+    return data.choices[0].message.content;
+  }
+
+  async function handleQuorix1_3b(text) {
+    const lower = text.toLowerCase();
+
+    // 1. Hardcoded tools first (same routing as 1.2b, so UX is consistent).
+    if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
+      return await handleWeather();
+    }
+    const imgMatch = lower.match(/\b(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
+    if (imgMatch) return await handleImages(imgMatch[1].replace(/[.!?]+$/, '').trim());
+    const wikiMatch = lower.match(/\b(?:tell\s+me\s+about|who\s+is|what\s+(?:is|are)|explain|describe|define|info(?:rmation)?\s+(?:on|about))\b\s+(.+)/i);
+    if (wikiMatch) return await handleWiki(wikiMatch[1].replace(/[.!?]+$/, '').trim());
+
+    // 2. Code generation — uses an enhanced system prompt that asks for clean,
+    //    self-contained, well-commented HTML.
+    const codeMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+|an\s+)?(.+)/i);
+    if (codeMatch) {
+      const request = codeMatch[1].replace(/[.!?]+$/, '').trim();
+      const systemPrompt =
+        'You are Quorix 1.3b, an expert front-end engineer. ' +
+        'Output ONE complete, self-contained HTML document. ' +
+        'Include inline CSS inside <style> and any JS inside <script>. ' +
+        'Use modern, clean visual design with a coherent color palette. ' +
+        'Add brief comments explaining non-obvious sections. ' +
+        'Return ONLY the raw HTML file, no Markdown fences, no explanations.';
+
+      let code;
+      try {
+        code = await callGroqAdvanced(
+          `Build: ${request}`,
+          { systemPrompt, temperature: 0.4, maxTokens: 4000 }
+        );
+        // Strip accidental Markdown fences if the model added them.
+        code = code.replace(/^```(?:html)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      } catch (err) {
+        console.error('1.3b code-gen failed, falling back to GitHub:', err.message);
+        const repo = await searchGithub(request);
+        if (repo) {
+          return {
+            html: `<p>Couldn't reach the code model, but I found a relevant repo:</p>
+                   <p><strong>${escapeHTML(repo.full_name)}</strong> ⭐ ${repo.stargazers_count}</p>
+                   <p>${escapeHTML(repo.description || '')}</p>
+                   <p><a href="${escapeHTML(repo.html_url)}" target="_blank" rel="noopener">${escapeHTML(repo.html_url)}</a></p>`
+          };
+        }
+        return { html: `<p>Code generation is unavailable right now. (${escapeHTML(err.message)})</p>` };
+      }
+
+      const codeId = 'code_1.3b_' + Date.now();
+      const codeData = { content: code, name: `quorix_1.3b_${Date.now()}.html` };
+      codeStore[codeId] = codeData;
+
+      return {
+        html: `<p>I've generated a complete HTML build for <strong>${escapeHTML(request)}</strong> using Quorix 1.3b. Click below to view and run it.</p>
+               <button class="view-panel-btn" data-code-id="${codeId}">
+                 <i class="fas fa-expand"></i> View Full HTML &amp; Run
+               </button>`,
+        codeId,
+        codeData
+      };
+    }
+
+    // 3. General chat — richer reasoning + Markdown rendering.
+    const systemPrompt =
+      'You are Quorix 1.3b, an advanced, thoughtful assistant. ' +
+      'Answer clearly and with appropriate depth. Use Markdown for structure: ' +
+      'headings (##), **bold**, *italic*, `inline code`, ```fenced code blocks```, ' +
+      'bullet lists (-), and numbered lists (1.). ' +
+      'Be concise when the question is simple; be thorough when the user asks for detail.';
+
+    try {
+      const answer = await callGroqAdvanced(text, { systemPrompt, temperature: 0.6, maxTokens: 2048 });
+      return { html: renderMarkdown(answer) };
+    } catch (err) {
+      console.error('1.3b chat failed, falling back to GitHub:', err.message);
+      const repo = await searchGithub(text);
+      if (repo) {
+        return {
+          html: `<p>Couldn't reach the chat model, but I found a relevant repo:</p>
+                 <p><strong>${escapeHTML(repo.full_name)}</strong> ⭐ ${repo.stargazers_count}</p>
+                 <p>${escapeHTML(repo.description || '')}</p>`
+        };
+      }
+      return { html: `<p>Sorry, I couldn't reach the AI service right now. (${escapeHTML(err.message)})</p>` };
+    }
   }
 
   /* ============================================
