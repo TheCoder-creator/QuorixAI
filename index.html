@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuorixAI</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -20,10 +21,8 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .bg-mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse 600px 400px at 15% 20%, rgba(0,230,138,0.06) 0%, transparent 70%), radial-gradient(ellipse 500px 500px at 85% 75%, rgba(0,180,230,0.04) 0%, transparent 70%); }
-
   .app-layout { position: relative; z-index: 1; display: flex; height: 100vh; width: 100vw; }
 
-  /* Sidebar is now a slide-in drawer on ALL screen sizes, opened via the Chats button */
   .session-sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 60; }
   .session-sidebar.open { transform: translateX(0); }
   .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -54,6 +53,14 @@
   .btn-icon:hover { background: var(--border); color: var(--fg); }
   .chats-btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--fg); cursor: pointer; transition: all 0.2s; font-family: inherit; font-size: 13px; font-weight: 600; }
   .chats-btn:hover { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+  .dropdown { position: relative; display: inline-block; }
+  .dropdown-menu { position: absolute; top: 45px; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 10px; min-width: 180px; z-index: 100; box-shadow: 0 8px 20px rgba(0,0,0,0.4); overflow: hidden; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 12px 16px; background: none; border: none; color: var(--fg); font-family: inherit; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .dropdown-item:hover { background: var(--accent-dim); color: var(--accent); }
+  .dropdown-item i { color: var(--muted); width: 16px; }
+  .dropdown-item:hover i { color: var(--accent); }
 
   .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
   .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 24px; padding: 40px; }
@@ -101,7 +108,7 @@
   .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes typeBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
 
-  .input-area { padding: 16px 24px 24px; flex-shrink: 0; border-top: 1px solid var(--border); backdrop-filter: blur(20px); background: rgba(10,10,15,0.8); }
+  .input-area { padding: 16px 24px 24px; flex-shrink: 0; border-top: 1px solid var(--border); backdrop-filter: blur(20px); background: rgba(10,10,15,0.8); position: relative; }
   .input-wrapper { display: flex; align-items: flex-end; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 6px 6px 6px 18px; transition: border-color 0.25s, box-shadow 0.25s; }
   .input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
   .input-wrapper textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--fg); font-family: 'Space Grotesk', sans-serif; font-size: 15px; resize: none; max-height: 120px; padding: 10px 0; line-height: 1.5; }
@@ -147,7 +154,6 @@
   .modal-confirm { background: var(--danger); color: #fff; border-color: var(--danger); } .modal-confirm:hover { background: #ff2244; }
 
   .msg-time { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
-
   .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
   .sidebar-backdrop.active { display: block; }
 
@@ -163,19 +169,17 @@
 <body>
 
 <div class="bg-mesh"></div>
-
 <div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="Image"></div>
 <div class="modal-overlay" id="confirmModal"><div class="modal-box"><h3 id="modalTitle">Clear?</h3><p id="modalMsg">Are you sure?</p><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-confirm" id="modalConfirmBtn">Confirm</button></div></div></div>
 <div class="toast-container" id="toastContainer"></div>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-<!-- Code Panel -->
 <div class="code-panel" id="codePanel">
   <div class="panel-header">
     <div class="panel-title"><i class="fas fa-code"></i> <span id="panelFileName">index.html</span></div>
     <div class="panel-actions">
       <button class="panel-btn copy" id="panelCopyBtn" onclick="copyPanelCode()"><i class="fas fa-copy"></i> Copy</button>
-      <button class="panel-btn run" id="runCodeBtn" onclick="runCode()" style="display:none;"><i class="fas fa-play"></i> Run Code</button>
+      <button class="panel-btn run" id="runCodeBtn" onclick="runCode()"><i class="fas fa-play"></i> Run Code</button>
       <button class="panel-btn close" onclick="closeCodePanel()"><i class="fas fa-times"></i></button>
     </div>
   </div>
@@ -185,7 +189,6 @@
   </div>
 </div>
 
-<!-- Sidebar (Chats drawer) -->
 <aside class="session-sidebar" id="sessionSidebar">
   <div class="sidebar-header">
     <div class="sidebar-title">Saved Chats</div>
@@ -197,7 +200,6 @@
   <div class="session-list" id="sessionList"></div>
 </aside>
 
-<!-- App Layout -->
 <div class="app-layout">
   <div class="chat-column" id="chatColumn">
     <header class="app-header">
@@ -206,6 +208,13 @@
         <div class="logo-text">Quorix<span>AI</span></div>
       </div>
       <div class="header-actions">
+        <div class="dropdown">
+          <button class="chats-btn" onclick="toggleModelMenu()" title="Select AI Model"><i class="fas fa-microchip"></i> <span id="activeModelText">Quorix 1.2b</span> <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.6;"></i></button>
+          <div class="dropdown-menu" id="modelMenu">
+            <button class="dropdown-item" onclick="switchModel('1.2b')"><i class="fas fa-rocket"></i> Quorix 1.2b (Code & Chat)</button>
+            <button class="dropdown-item" onclick="switchModel('1.1b')"><i class="fas fa-shield-alt"></i> Quorix 1.1b (Local Fallback)</button>
+          </div>
+        </div>
         <button class="chats-btn" onclick="toggleSidebar()" title="View saved chats"><i class="fas fa-comments"></i> <span>Chats</span></button>
         <button class="btn-icon" onclick="confirmClearChat()" title="Clear current chat"><i class="fas fa-trash-alt" style="color:var(--danger);"></i></button>
       </div>
@@ -214,7 +223,7 @@
       <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-icon"><i class="fas fa-bolt"></i></div>
         <h1 class="welcome-title">Welcome to Quorix<span>AI</span></h1>
-        <p class="welcome-sub" id="welcomeSub">Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.</p>
+        <p class="welcome-sub" id="welcomeSub">Currently running <strong>Quorix 1.2b</strong>. An advanced model capable of code generation, general chat, Wikipedia searches, and image fetching.</p>
         <div class="quick-actions" id="quickActions">
           <button class="quick-btn" onclick="quickAction('Tell me about the Roman Empire')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
           <button class="quick-btn" onclick="quickAction('Code a snake game')"><i class="fas fa-code"></i> Build Code</button>
@@ -226,7 +235,7 @@
     </main>
     <div class="input-area">
       <div class="input-wrapper">
-        <textarea id="userInput" rows="1" placeholder="Ask QuorixAI anything..." aria-label="Message input"></textarea>
+        <textarea id="userInput" rows="1" placeholder="Ask Quorix 1.2b anything..." aria-label="Message input"></textarea>
         <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
       </div>
     </div>
@@ -234,6 +243,14 @@
 </div>
 
 <script>
+  /* ============================================
+     SUPABASE INITIALIZATION
+     ============================================ */
+  const SUPABASE_URL = 'https://eekwlctegngxdzannddi.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_YhaRLUgoEVB6iFTMJRwwEw_Bi7v-Qnq';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let activeModel = '1.2b'; // Default model is now 1.2b
+
   /* ============================================
      STORAGE KEYS & GLOBAL STATE
      ============================================ */
@@ -244,13 +261,8 @@
   let isProcessing = false;
   let modalCallback = null;
   let currentRawCode = '';
-
-  // Persists across refresh: maps codeId -> {content, name}
   let codeStore = {};
 
-  /* ============================================
-     INITIALIZATION
-     ============================================ */
   function init() {
     loadSessions();
     rebuildCodeStore();
@@ -272,18 +284,62 @@
     document.getElementById('sidebarBackdrop').classList.remove('active');
   }
 
-  /* ============================================
-     SESSION MANAGEMENT
-     ============================================ */
+  function toggleModelMenu() {
+    document.getElementById('modelMenu').classList.toggle('active');
+  }
+
+  // Close model menu if clicking outside
+  document.addEventListener('click', (e) => {
+    const dropdown = document.querySelector('.dropdown');
+    if (dropdown && !dropdown.contains(e.target)) {
+      document.getElementById('modelMenu').classList.remove('active');
+    }
+  });
+
+  async function switchModel(model) {
+    activeModel = model;
+    document.getElementById('activeModelText').textContent = `Quorix ${model}`;
+    document.getElementById('modelMenu').classList.remove('active');
+    
+    // If switching to 1.1b, fetch its specific HTML payload from Supabase
+    if (model === '1.1b') {
+      showToast(`Loading Quorix 1.1b environment...`, 'success');
+      try {
+        const { data, error } = await supabaseClient
+          .from('quorix_models')
+          .select('code_content, file_name')
+          .eq('model_name', '1.1b')
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          // Run the 1.1b config code directly in the panel
+          currentRawCode = data.code_content;
+          document.getElementById('panelFileName').textContent = data.file_name || 'quorix_1.1b.html';
+          document.getElementById('runCodeBtn').style.display = 'flex';
+          document.getElementById('panelPreview').classList.remove('active');
+          document.getElementById('panelCode').style.display = 'block';
+          document.getElementById('codePanel').classList.add('open');
+          document.getElementById('chatColumn').classList.add('panel-open');
+          streamPanelCode(data.code_content);
+        }
+      } catch (err) {
+        showToast(`Database error: ${err.message}`, 'error');
+      }
+    } else {
+      // Switching back to 1.2b closes the panel
+      closeCodePanel();
+    }
+    
+    updateInputState();
+    document.getElementById('welcomeSub').textContent = `Currently running Quorix ${model}. Ask me to generate code, chat, search Wikipedia, or check the weather.`;
+  }
+
   function loadSessions() {
     try {
       sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY)) || {};
-    } catch (e) {
-      sessions = {};
-    }
+    } catch (e) { sessions = {}; }
     activeSessionId = localStorage.getItem(ACTIVE_KEY);
-    // Only restore an active session if it still exists. Do NOT auto-create one —
-    // on first login the user must create a new chat before they can ask a question.
     if (!activeSessionId || !sessions[activeSessionId]) {
       activeSessionId = null;
     }
@@ -292,18 +348,14 @@
 
   function saveSessions() {
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-    if (activeSessionId) {
-      localStorage.setItem(ACTIVE_KEY, activeSessionId);
-    } else {
-      localStorage.removeItem(ACTIVE_KEY);
-    }
+    if (activeSessionId) localStorage.setItem(ACTIVE_KEY, activeSessionId);
+    else localStorage.removeItem(ACTIVE_KEY);
   }
 
   function createNewSession(switchTo = true) {
     const id = 'sess_' + Date.now();
     const existing = Object.keys(sessions).length;
-    const name = 'New Chat ' + (existing + 1);
-    sessions[id] = { name, messages: [] };
+    sessions[id] = { name: `New Chat ${existing + 1}`, messages: [] };
     if (switchTo) {
       switchSession(id);
       closeSidebar();
@@ -325,10 +377,7 @@
   function deleteSession(id, e) {
     e.stopPropagation();
     delete sessions[id];
-    if (activeSessionId === id) {
-      // Don't auto-create — leave the user on the "create a chat" screen if none remain.
-      activeSessionId = null;
-    }
+    if (activeSessionId === id) activeSessionId = null;
     saveSessions();
     rebuildCodeStore();
     renderSessionList();
@@ -338,16 +387,13 @@
   function renderSessionList() {
     const list = document.getElementById('sessionList');
     list.innerHTML = '';
-    const sortedIds = Object.keys(sessions).sort((a, b) => {
-      return parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]);
-    });
+    const sortedIds = Object.keys(sessions).sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]));
     if (sortedIds.length === 0) {
       list.innerHTML = '<div class="session-empty">No saved chats yet.</div>';
       return;
     }
     sortedIds.forEach(id => {
       const s = sessions[id];
-      const count = (s.messages || []).length;
       const div = document.createElement('div');
       div.className = `session-item ${id === activeSessionId ? 'active' : ''}`;
       div.onclick = (e) => { if (!e.target.closest('.session-actions') && !e.target.closest('.session-rename-input')) switchSession(id); };
@@ -356,9 +402,7 @@
     });
   }
 
-  function getActiveMessages() {
-    return sessions[activeSessionId]?.messages || [];
-  }
+  function getActiveMessages() { return sessions[activeSessionId]?.messages || []; }
 
   function startRename(id, e) {
     e.stopPropagation();
@@ -368,23 +412,13 @@
     if (!nameSpan || item.querySelector('.session-rename-input')) return;
     const current = sessions[id]?.name || '';
     const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'session-rename-input';
-    input.value = current;
-    input.maxLength = 60;
+    input.type = 'text'; input.className = 'session-rename-input'; input.value = current; input.maxLength = 60;
     nameSpan.replaceWith(input);
-    input.focus();
-    input.select();
-
+    input.focus(); input.select();
     const commit = (save) => {
-      if (input._done) return;
-      input._done = true;
-      if (save) {
-        const val = input.value.trim();
-        if (val) sessions[id].name = val;
-      }
-      saveSessions();
-      renderSessionList();
+      if (input._done) return; input._done = true;
+      if (save) { const val = input.value.trim(); if (val) sessions[id].name = val; }
+      saveSessions(); renderSessionList();
     };
     input.addEventListener('keydown', (ev) => {
       ev.stopPropagation();
@@ -395,48 +429,36 @@
     input.addEventListener('click', (ev) => ev.stopPropagation());
   }
 
-  /* ============================================
-     CODE STORE (persists panel code across refresh)
-     ============================================ */
   function rebuildCodeStore() {
     codeStore = {};
     Object.values(sessions).forEach(sess => {
       sess.messages.forEach(msg => {
-        if (msg.codeData && msg.codeId) {
-          codeStore[msg.codeId] = msg.codeData;
-        }
+        if (msg.codeData && msg.codeId) codeStore[msg.codeId] = msg.codeData;
       });
     });
   }
 
-  /* ============================================
-     CHAT RENDERING
-     ============================================ */
   function renderChat() {
     updateInputState();
     const area = document.getElementById('chatArea');
     area.querySelectorAll('.msg-row').forEach(el => el.remove());
-
     const welcome = document.getElementById('welcomeScreen');
     const sub = document.getElementById('welcomeSub');
     const quick = document.getElementById('quickActions');
     const startBtn = document.getElementById('startChatBtn');
 
-    // No active session: prompt the user to create a chat before asking anything.
     if (!activeSessionId) {
       welcome.style.display = 'flex';
       sub.textContent = 'Create a new chat to start asking questions. Your conversations are saved locally and you can rename them anytime from the Chats menu.';
-      quick.style.display = 'none';
-      startBtn.style.display = 'inline-flex';
+      quick.style.display = 'none'; startBtn.style.display = 'inline-flex';
       return;
     }
 
     const msgs = getActiveMessages();
     if (msgs.length === 0) {
       welcome.style.display = 'flex';
-      sub.textContent = 'Your local AI assistant. Search Wikipedia, find images, check the weather, or fetch runnable code that always opens as a full HTML file in the side panel.';
-      quick.style.display = 'grid';
-      startBtn.style.display = 'none';
+      sub.textContent = `Currently using Quorix ${activeModel}. Ask me to generate code, chat, search Wikipedia, or check the weather.`;
+      quick.style.display = 'grid'; startBtn.style.display = 'none';
       return;
     }
     welcome.style.display = 'none';
@@ -448,14 +470,13 @@
     scrollToBottom();
   }
 
-  // Enable the composer only when a chat exists; otherwise force a new chat first.
   function updateInputState() {
     const input = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const hasSession = !!activeSessionId;
     input.disabled = !hasSession;
     sendBtn.disabled = !hasSession || isProcessing;
-    input.placeholder = hasSession ? 'Ask QuorixAI anything...' : 'Create a new chat to start asking questions...';
+    input.placeholder = hasSession ? `Ask Quorix ${activeModel} anything...` : 'Create a new chat to start asking questions...';
   }
 
   function createMsgElement(msg) {
@@ -469,12 +490,10 @@
     content.innerHTML = msg.html;
     if (msg.time) {
       const t = document.createElement('div');
-      t.className = 'msg-time';
-      t.textContent = msg.time;
+      t.className = 'msg-time'; t.textContent = msg.time;
       content.appendChild(t);
     }
-    row.appendChild(avatar);
-    row.appendChild(content);
+    row.appendChild(avatar); row.appendChild(content);
     return row;
   }
 
@@ -508,9 +527,6 @@
     if (el) el.remove();
   }
 
-  /* ============================================
-     BIND INTERACTIVE ELEMENTS (panel btns, images)
-     ============================================ */
   function bindInteractiveEls(root) {
     root.querySelectorAll('.view-panel-btn').forEach(btn => {
       btn.onclick = (e) => {
@@ -519,53 +535,37 @@
         if (codeId) openCodePanel(codeId);
       };
     });
-
     root.querySelectorAll('.img-grid img').forEach(img => {
       img.onclick = () => openLightbox(img.src);
     });
   }
 
-  /* ============================================
-     INPUT & SEND LOGIC
-     ============================================ */
   function setupInputListeners() {
     const input = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
-
     input.addEventListener('input', () => {
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 120) + 'px';
     });
-
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
-
-    sendBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      sendMessage();
-    });
+    sendBtn.addEventListener('click', (e) => { e.preventDefault(); sendMessage(); });
   }
 
   async function sendMessage() {
     if (isProcessing) return;
     if (!activeSessionId) {
       showToast('Create a new chat first to start asking questions.', 'error');
-      toggleSidebar();
-      return;
+      toggleSidebar(); return;
     }
     const input = document.getElementById('userInput');
     const text = input.value.trim();
     if (!text) return;
 
-    input.value = '';
-    input.style.height = 'auto';
+    input.value = ''; input.style.height = 'auto';
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // Auto-title from the first question, but only if the user hasn't renamed it.
     if (getActiveMessages().length === 0 && /^New Chat \d+$/.test(sessions[activeSessionId].name || '')) {
       sessions[activeSessionId].name = text.substring(0, 25) + (text.length > 25 ? '...' : '');
       renderSessionList();
@@ -581,26 +581,11 @@
     showTyping();
 
     try {
-      const intent = detectIntent(text);
       let result;
-
-      switch (intent.type) {
-        case 'chat':
-          result = await handleChat(intent.query);
-          break;
-        case 'weather':
-          result = await handleWeather();
-          break;
-        case 'images':
-          result = await handleImages(intent.query);
-          break;
-        case 'github':
-          result = await handleGithub(intent.query);
-          break;
-        case 'wiki':
-        default:
-          result = await handleWiki(intent.query || text);
-          break;
+      if (activeModel === '1.2b') {
+        result = await handleQuorix1_2b(text); // Code & Chat API
+      } else {
+        result = await handleQuorix1_1b(text); // Local Fallback
       }
 
       const aiMsg = {
@@ -624,7 +609,6 @@
       bindInteractiveEls(msgEl);
       saveSessions();
 
-      // Always auto-open the code panel when a full HTML file was generated
       if (result.codeId && result.codeData) {
         openCodePanel(result.codeId);
       }
@@ -648,84 +632,170 @@
   function quickAction(text) {
     if (!activeSessionId) {
       showToast('Create a new chat first to start asking questions.', 'error');
-      toggleSidebar();
-      return;
+      toggleSidebar(); return;
     }
     document.getElementById('userInput').value = text;
     sendMessage();
   }
 
   /* ============================================
-     INTENT DETECTION
+     MODEL 1.2b LOGIC (Pollinations API - Code & Chat)
      ============================================ */
-  /* ============================================
-     INTENT DETECTION
-     ============================================ */
-  function detectIntent(text) {
-    const lower = text.toLowerCase().trim();
+  async function handleQuorix1_2b(text) {
+    const lower = text.toLowerCase();
 
-    // 1. Check for conversational/chatbot vibes first
-    const chatPatterns = [
-      { type: 'chat', category: 'greeting', regex: /^(hi|hello|hey|yo|howdy|sup|greetings)\b/i },
-      { type: 'chat', category: 'howareyou', regex: /how are you|how's it going|how are things|what's up/i },
-      { type: 'chat', category: 'identity', regex: /who are you|what are you|what is your name|who made you|who created you/i },
-      { type: 'chat', category: 'capabilities', regex: /what can you do|help me|how do you work|what do you do/i },
-      { type: 'chat', category: 'thanks', regex: /thanks|thank you|thx|appreciate it/i },
-      { type: 'chat', category: 'bye', regex: /bye|goodbye|see ya|farewell|later/i }
-    ];
-
-    for (let p of chatPatterns) {
-      if (p.regex.test(lower)) {
-        return { type: 'chat', category: p.category, query: text };
-      }
-    }
-
-    // 2. Check for Weather
+    // 1. Check for hardcoded tools first (Weather, Images, Wiki)
     if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
-      return { type: 'weather' };
+      return await handleWeather();
     }
 
-    // 3. Check for Images
-    const imgMatch = lower.match(/(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
-    const imgDirect = lower.match(/(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
-    if (imgMatch) return { type: 'images', query: imgMatch[1].replace(/[.!?]+$/, '').trim() };
-    if (imgDirect && !/\b(tell|explain|what|who|how|why|when|where|is|are|was|were|do|does|did)\b/i.test(lower.substring(0, lower.indexOf(imgDirect[0])))) {
-      return { type: 'images', query: imgDirect[1].replace(/[.!?]+$/, '').trim() };
+    const imgMatch = lower.match(/\b(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
+    if (imgMatch) return await handleImages(imgMatch[1].replace(/[.!?]+$/, '').trim());
+
+    const wikiMatch = lower.match(/\b(?:tell\s+me\s+about|who\s+is|what\s+(?:is|are)|explain|describe|define|info(?:rmation)?\s+(?:on|about))\b\s+(.+)/i);
+    if (wikiMatch) return await handleWiki(wikiMatch[1].replace(/[.!?]+$/, '').trim());
+
+    // 2. Check for Code Generation Request
+    const codeMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+|an\s+)?(.+)/i);
+    if (codeMatch) {
+      return await handlePollinationsCode(codeMatch[1].replace(/[.!?]+$/, '').trim());
     }
 
-    // 4. Check for Code Generation
-    const ghMatch = lower.match(/(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+)?(.+)/i);
-    if (ghMatch) return { type: 'github', query: ghMatch[1].replace(/[.!?]+$/, '').trim() };
+    // 3. Fallback to Pollinations General Chat API
+    return await handlePollinationsChat(text);
+  }
 
-    // 5. Default to Wikipedia
-    const wikiQuery = lower
-      .replace(/\b(tell\s+me\s+about|who\s+is|what\s+(is|are)|explain|describe|about|define|info(?:rmation)?\s+(?:on|about))\b/gi, '')
-      .trim();
-    return { type: 'wiki', query: wikiQuery || text };
+  async function handlePollinationsChat(query) {
+    const systemPrompt = `You are QuorixAI version 1.2b, a fast and helpful AI assistant. 
+Keep your answers concise and conversational. 
+You DO NOT have access to live weather, code generation, or image search tools in this chat mode. 
+If the user asks for those specifically, tell them to phrase it explicitly (e.g., "Tell me about..." for Wikipedia, "Code a..." for code generation).`;
+
+    const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(query)}?system=${encodeURIComponent(systemPrompt)}&model=openai`;
+    
+    try {
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error('Chatbot service is currently unavailable.');
+      const text = await res.text();
+      if (!text || text.trim().length === 0) {
+        return { html: `<p>I'm not sure how to respond to that. Could you try rephrasing?</p>` };
+      }
+      const formattedHtml = text.split('\n').filter(line => line.trim().length > 0).map(line => `<p>${escapeHTML(line)}</p>`).join('');
+      return { html: formattedHtml };
+    } catch (err) {
+      return { html: `<p>Sorry, I couldn't connect to the chatbot API. ${escapeHTML(err.message)}</p>` };
+    }
+  }
+
+  async function handlePollinationsCode(query) {
+    try {
+      showToast('Generating code via Pollinations 1.2b...', 'success');
+      const prompt = `Write a complete, single-file HTML document with inline CSS and vanilla JS for: ${query}. Only return the raw HTML code, starting with <!DOCTYPE html>. Do not include markdown backticks or explanations.`;
+      const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+      
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error('Code generation service is currently unavailable.');
+      
+      let rawHtml = await res.text();
+      // Clean up markdown if the model added it despite instructions
+      rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, '').trim();
+
+      if (!rawHtml || !rawHtml.includes('<')) {
+        return { html: `<p>I couldn't generate valid code for that. Please try rephrasing your request.</p>` };
+      }
+
+      const fullHTML = wrapAsFullHTML(rawHtml, 'generated_code.html');
+      const codeId = 'code_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const codeData = { content: fullHTML, name: 'generated_code.html' };
+      codeStore[codeId] = codeData;
+
+      const chatHtml = `<p>Here is the code for <strong>${escapeHTML(query)}</strong>. It's open in the side panel — hit <strong>Run Code</strong> to preview it.</p><button class="view-panel-btn" data-code-id="${codeId}"><i class="fas fa-expand"></i> View Full HTML & Run</button>`;
+      return { html: chatHtml, codeId, codeData };
+    } catch (err) {
+      return { html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>` };
+    }
   }
 
   /* ============================================
-     STREAMING (handles HTML tags properly)
+     MODEL 1.1b LOGIC (Local Fallback)
+     ============================================ */
+  async function handleQuorix1_1b(text) {
+    const lower = text.toLowerCase().trim();
+    let html = '';
+
+    // 1. Check for hardcoded tools first
+    if (/\b(weather|temperature|forecast|how\s+(hot|cold|warm)|climate)\b/i.test(lower)) {
+      return await handleWeather();
+    }
+    const imgMatch = lower.match(/\b(?:show|find|get|search|look\s+for|display|see)\s+(?:me\s+)?(?:images?|photos?|pictures?|pics?)\s+(?:of\s+)?(.+)/i);
+    if (imgMatch) return await handleImages(imgMatch[1].replace(/[.!?]+$/, '').trim());
+    const wikiMatch = lower.match(/\b(?:tell\s+me\s+about|who\s+is|what\s+(?:is|are)|explain|describe|define|info(?:rmation)?\s+(?:on|about))\b\s+(.+)/i);
+    if (wikiMatch) return await handleWiki(wikiMatch[1].replace(/[.!?]+$/, '').trim());
+
+    // 2. Local Code generation match
+    const codeMatch = lower.match(/^(?:can\s+you\s+|please\s+)?(?:code|write|make|build|create|develop|program|implement|generate)\s+(?:me\s+)?(?:a\s+|an\s+)?(.+)/i);
+    if (codeMatch) {
+      // Fetches hardcoded code from Supabase for 1.1b
+      showToast('Loading Quorix 1.1b code configuration...', 'success');
+      try {
+        const { data, error } = await supabaseClient.from('quorix_models').select('code_content, file_name').eq('model_name', '1.1b').single();
+        if (error) throw error;
+        if (data) {
+          const codeId = 'code_1.1b_' + Date.now();
+          const codeData = { content: data.code_content, name: data.file_name };
+          codeStore[codeId] = codeData;
+          return { 
+            html: `<p>I have loaded the base HTML environment for Quorix 1.1b. You can run it in the side panel.</p><button class="view-panel-btn" data-code-id="${codeId}"><i class="fas fa-expand"></i> View Full HTML & Run</button>`, 
+            codeId, 
+            codeData 
+          };
+        }
+      } catch (err) {
+        return { html: `<p>Database error: ${escapeHTML(err.message)}</p>` };
+      }
+    }
+
+    // 3. Local Chat patterns
+    if (/^(hi|hello|hey|yo|howdy|sup|greetings|good morning|good afternoon|good evening)\b/i.test(lower)) {
+      const responses = ["Hello there! 👋 How can I assist you today?", "Hey! What can I do for you?", "Hi! I'm ready to help.", "Greetings! How can I help?"];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } else if (/how are you|how's it going|how are things|what's up|how do you do/i.test(lower)) {
+      html = `<p>I'm running at 100% locally in your browser, so I feel great! ⚡ How about you? What can I help you with?</p>`;
+    } else if (/who are you|what are you|what is your name|who made you|who created you|what version/i.test(lower)) {
+      html = `<p>I am <strong>QuorixAI version 1.1b</strong>. I'm a local AI assistant built entirely with JavaScript. I don't use external APIs for chatting, but I can fetch info from Wikipedia, generate code, check the weather, and find images!</p>`;
+    } else if (/what can you do|help me|how do you work|what do you do|help$/i.test(lower)) {
+      html = `<p>Here is what I can do right inside your browser:</p><ul style="margin-left: 20px; margin-top: 8px;"><li><strong>Wikipedia Search:</strong> Ask me "Tell me about black holes".</li><li><strong>Code Generation:</strong> Ask me "Code a snake game" (Loads local config).</li><li><strong>Weather Forecasts:</strong> Ask me "What's the weather right now?"</li><li><strong>Images:</strong> Ask me "Show me pictures of mountains".</li><li><strong>Chat:</strong> I can say hi, tell you about myself, and do basic math!</li></ul>`;
+    } else if (/thanks|thank you|thx|appreciate it|cheers/i.test(lower)) {
+      const responses = ["You're very welcome! 😊", "Anytime! Let me know if you need anything else.", "Happy to help! 🚀"];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } else if (/bye|goodbye|see ya|farewell|later|gtg/i.test(lower)) {
+      const responses = ["Goodbye! Have a great day. 👋", "See you later! I'll be right here when you need me.", "Until next time!"];
+      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
+    } else if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(lower) && lower.length > 1) {
+      try { const result = eval(lower); html = `<p>The answer to <strong>${escapeHTML(lower)}</strong> is <strong>${result}</strong>.</p>`; }
+      catch { html = `<p>That doesn't look like a valid math problem. Try something like "12 * 5".</p>`; }
+    } else {
+      html = `<p>I'm not quite sure how to respond to that conversationally, but I can look it up for you! Try asking me to "Tell me about..." or "Explain..." and I'll search Wikipedia for you.</p>`;
+    }
+    await new Promise(r => setTimeout(r, 500));
+    return { html };
+  }
+
+  /* ============================================
+     STREAMING & FORMATTING
      ============================================ */
   async function streamText(element, html, speed = 1) {
-    let output = '';
-    let i = 0;
+    let output = ''; let i = 0;
     while (i < html.length) {
       if (html[i] === '<') {
         const tagEnd = html.indexOf('>', i);
-        if (tagEnd !== -1) {
-          output += html.substring(i, tagEnd + 1);
-          i = tagEnd + 1;
-        } else {
-          output += html[i];
-          i++;
-        }
+        if (tagEnd !== -1) { output += html.substring(i, tagEnd + 1); i = tagEnd + 1; }
+        else { output += html[i]; i++; }
       } else {
         const chunkEnd = Math.min(i + 4, html.length);
         let nextTag = html.indexOf('<', i);
         let end = nextTag !== -1 && nextTag < chunkEnd ? nextTag : chunkEnd;
-        output += html.substring(i, end);
-        i = end;
+        output += html.substring(i, end); i = end;
         await new Promise(r => setTimeout(r, speed));
       }
       element.innerHTML = output;
@@ -738,346 +808,84 @@
     codeEl.textContent = '';
     const chunkSize = 120;
     for (let i = 0; i < codeText.length; i += chunkSize) {
-      const chunk = codeText.substring(i, Math.min(i + chunkSize, codeText.length));
-      codeEl.textContent += chunk;
-      const body = document.getElementById('panelBody');
-      body.scrollTop = body.scrollHeight;
+      codeEl.textContent += codeText.substring(i, Math.min(i + chunkSize, codeText.length));
+      document.getElementById('panelBody').scrollTop = document.getElementById('panelBody').scrollHeight;
       await new Promise(r => setTimeout(r, 0));
     }
-    document.getElementById('runCodeBtn').style.display = 'flex';
   }
 
-  /* ============================================
-     FULL HTML WRAPPER — always produce a complete,
-     runnable HTML document regardless of source/size
-     ============================================ */
   function wrapAsFullHTML(content, path) {
-    // Already a full document — use as-is
     if (/<!DOCTYPE html>|<html[\s>]/i.test(content)) return content;
-
-    const ext = (path.split('.').pop() || '').toLowerCase();
     const baseStyle = `*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#0d1117;color:#e8e6f0;padding:24px;line-height:1.6}`;
-
-    if (ext === 'css') {
-      return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeAttr(path)}</title>
-<style>
-${content}
-</style>
-</head>
-<body>
-  <h1>CSS Preview</h1>
-  <p>This document applies the stylesheet <strong>${escapeHTML(path)}</strong>.</p>
-  <button>Sample Button</button>
-</body>
-</html>`;
-    }
-
-    if (['js', 'ts', 'jsx', 'tsx'].includes(ext)) {
-      return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeAttr(path)}</title>
-<style>${baseStyle}</style>
-</head>
-<body>
-<div id="app"></div>
-<script>
-${content}
-<\/script>
-</body>
-</html>`;
-    }
-
-    // HTML fragment or any other content: embed inside a body
-    const isMarkup = /<\w+[^>]*>/.test(content);
-    const bodyContent = isMarkup ? content : `<pre style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace">${escapeHTML(content)}</pre>`;
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeAttr(path)}</title>
-<style>${baseStyle}</style>
-</head>
-<body>
-${bodyContent}
-</body>
-</html>`;
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${escapeAttr(path)}</title><style>${baseStyle}</style></head><body>${content}</body></html>`;
   }
 
   /* ============================================
-     HANDLERS
+     WIKIPEDIA, WEATHER, IMAGES
      ============================================ */
-
-  /* ============================================
-     100% LOCAL CHATBOT ENGINE (No API/No DB)
-     ============================================ */
-  async function handleChat(query) {
-    const lower = query.toLowerCase().trim();
-    let html = '';
-
-    // 1. Greetings
-    if (/^(hi|hello|hey|yo|howdy|sup|greetings|good morning|good afternoon|good evening)\b/i.test(lower)) {
-      const responses = [
-        "Hello there! 👋 How can I assist you today?",
-        "Hey! What can I do for you?",
-        "Hi! I'm ready to help. Ask me to search Wikipedia, write some code, or check the weather.",
-        "Greetings! How can I help?"
-      ];
-      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
-    } 
-    // 2. How are you
-    else if (/how are you|how's it going|how are things|what's up|how do you do/i.test(lower)) {
-      html = `<p>I'm running at 100% locally in your browser, so I feel great! ⚡ How about you? What can I help you with?</p>`;
-    } 
-    // 3. Identity & Version
-    else if (/who are you|what are you|what is your name|who made you|who created you|what version/i.test(lower)) {
-      html = `<p>I am <strong>Quorix 1.1b</strong>. I'm a local AI assistant built entirely with JavaScript. I don't use external APIs for chatting, but I can fetch info from Wikipedia, generate code, check the weather, and find images!</p>`;
-    } 
-    // 4. Capabilities
-    else if (/what can you do|help me|how do you work|what do you do|help$/i.test(lower)) {
-      html = `<p>Here is what I can do right inside your browser:</p>
-              <ul style="margin-left: 20px; margin-top: 8px;">
-                <li><strong>Wikipedia Search:</strong> Ask me "Tell me about black holes".</li>
-                <li><strong>Code Generation:</strong> Ask me "Code a snake game".</li>
-                <li><strong>Weather Forecasts:</strong> Ask me "What's the weather right now?"</li>
-                <li><strong>Images:</strong> Ask me "Show me pictures of mountains".</li>
-                <li><strong>Chat:</strong> I can say hi, tell you about myself, and do basic math!</li>
-              </ul>`;
-    } 
-    // 5. Thanks
-    else if (/thanks|thank you|thx|appreciate it|cheers/i.test(lower)) {
-      const responses = [
-        "You're very welcome! 😊",
-        "Anytime! Let me know if you need anything else.",
-        "Happy to help! 🚀"
-      ];
-      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
-    } 
-    // 6. Goodbye
-    else if (/bye|goodbye|see ya|farewell|later|gtg/i.test(lower)) {
-      const responses = [
-        "Goodbye! Have a great day. 👋",
-        "See you later! I'll be right here when you need me.",
-        "Until next time!"
-      ];
-      html = `<p>${responses[Math.floor(Math.random() * responses.length)]}</p>`;
-    } 
-    // 7. Basic Math (evaluates simple math equations safely)
-    else if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(lower)) {
-      try {
-        const result = eval(lower);
-        html = `<p>The answer to <strong>${escapeHTML(lower)}</strong> is <strong>${result}</strong>.</p>`;
-      } catch {
-        html = `<p>That doesn't look like a valid math problem. Try something like "12 * 5".</p>`;
-      }
-    } 
-    // 8. Conversational Fallback
-    else {
-      html = `<p>I'm not quite sure how to respond to that conversationally, but I can look it up for you! Try asking me to "Tell me about..." or "Explain..." and I'll search Wikipedia for you.</p>`;
-    }
-
-    // Simulate a tiny bit of "thinking" delay so the typing dots show up briefly
-    await new Promise(r => setTimeout(r, 500));
-    
-    return { html };
-  }
-
-    // --- Wikipedia ---
   async function handleWiki(query) {
     const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`;
     const searchData = await (await fetch(searchUrl)).json();
-
-    if (!searchData.query?.search?.length) {
-      return { html: `<p>No results found for <strong>${escapeHTML(query)}</strong>.</p>` };
-    }
-
+    if (!searchData.query?.search?.length) return { html: `<p>No results found for <strong>${escapeHTML(query)}</strong>.</p>` };
     const pageId = searchData.query.search[0].pageid;
     const title = searchData.query.search[0].title;
     const extractUrl = `https://en.wikipedia.org/w/api.php?action=query&pageids=${pageId}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`;
     const extractData = await (await fetch(extractUrl)).json();
-
     let extract = extractData.query?.pages?.[pageId]?.extract || 'No extract available.';
     if (extract.length > 600) {
       extract = extract.substring(0, 600);
       const lp = extract.lastIndexOf('.');
       extract = (lp > 300 ? extract.substring(0, lp + 1) : extract) + ' ...';
     }
-
-    return {
-      html: `<p><strong>${escapeHTML(title)}</strong></p><p>${escapeHTML(extract)}</p>`
-    };
+    return { html: `<p><strong>${escapeHTML(title)}</strong></p><p>${escapeHTML(extract)}</p>` };
   }
 
-  // --- Images (Wikipedia Image API — no key needed) ---
   async function handleImages(query) {
     try {
       const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=8&prop=pageimages|info&piprop=thumbnail&pithumbsize=600&inprop=url&format=json&origin=*`;
       const data = await (await fetch(searchUrl)).json();
-
-      if (!data.query?.pages) {
-        return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>.</p>` };
-      }
-
-      const pages = Object.values(data.query.pages)
-        .filter(p => p.thumbnail && p.thumbnail.source)
-        .slice(0, 6);
-
-      if (!pages.length) {
-        return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>. Try a more specific term.</p>` };
-      }
-
+      if (!data.query?.pages) return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>.</p>` };
+      const pages = Object.values(data.query.pages).filter(p => p.thumbnail && p.thumbnail.source).slice(0, 6);
+      if (!pages.length) return { html: `<p>No images found for <strong>${escapeHTML(query)}</strong>. Try a more specific term.</p>` };
       let html = `<p>Images for <strong>${escapeHTML(query)}</strong>:</p><div class="img-grid">`;
-      pages.forEach(p => {
-        const imgUrl = escapeAttr(p.thumbnail.source);
-        const altText = escapeAttr(p.title || query);
-        html += `<img src="${imgUrl}" alt="${altText}" loading="lazy">`;
-      });
+      pages.forEach(p => { html += `<img src="${escapeAttr(p.thumbnail.source)}" alt="${escapeAttr(p.title || query)}" loading="lazy">`; });
       html += `</div>`;
       return { html };
-
-    } catch (err) {
-      return { html: `<p>Failed to fetch images: ${escapeHTML(err.message)}</p>` };
-    }
+    } catch (err) { return { html: `<p>Failed to fetch images: ${escapeHTML(err.message)}</p>` }; }
   }
 
-  // --- Weather (Open-Meteo + Nominatim — no key needed) ---
   async function handleWeather() {
     let lat, lon, cityName = 'your location';
-
     try {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-      });
-      lat = pos.coords.latitude;
-      lon = pos.coords.longitude;
+      const pos = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 }));
+      lat = pos.coords.latitude; lon = pos.coords.longitude;
     } catch {
-      return {
-        html: `<p><strong>Location access denied.</strong> Please allow location access to check the weather, or try asking something else.</p>`
-      };
+      return { html: `<p><strong>Location access denied.</strong> Please allow location access to check the weather, or try asking something else.</p>` };
     }
-
     try {
       const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10`;
       const geo = await (await fetch(geoUrl)).json();
-      if (geo.address) {
-        cityName = geo.address.city || geo.address.town || geo.address.village || geo.address.county || cityName;
-      }
-    } catch { /* use default city name */ }
-
+      if (geo.address) cityName = geo.address.city || geo.address.town || geo.address.village || geo.address.county || cityName;
+    } catch {}
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,surface_pressure&temperature_unit=celsius&timezone=auto`;
     const data = await (await fetch(weatherUrl)).json();
     const c = data.current;
-
-    if (!c) {
-      return { html: `<p>Could not retrieve weather data. Please try again.</p>` };
-    }
-
-    return {
-      html: `<p><strong>Weather in ${escapeHTML(cityName)}</strong></p><div class="weather-card"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:48px;">${weatherCodeToIcon(c.weather_code)}</div><div><div class="temp">${Math.round(c.temperature_2m)}&deg;C</div><div style="color:var(--muted);font-size:13px;">${weatherCodeToText(c.weather_code)}</div></div></div><div class="weather-grid"><div class="w-item"><div class="w-val">${c.relative_humidity_2m}%</div><div class="w-label">Humidity</div></div><div class="w-item"><div class="w-val">${c.wind_speed_10m} km/h</div><div class="w-label">Wind</div></div><div class="w-item"><div class="w-val">${Math.round(c.surface_pressure)} hPa</div><div class="w-label">Pressure</div></div></div></div>`
-    };
+    if (!c) return { html: `<p>Could not retrieve weather data. Please try again.</p>` };
+    return { html: `<p><strong>Weather in ${escapeHTML(cityName)}</strong></p><div class="weather-card"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:48px;">${weatherCodeToIcon(c.weather_code)}</div><div><div class="temp">${Math.round(c.temperature_2m)}&deg;C</div><div style="color:var(--muted);font-size:13px;">${weatherCodeToText(c.weather_code)}</div></div></div><div class="weather-grid"><div class="w-item"><div class="w-val">${c.relative_humidity_2m}%</div><div class="w-label">Humidity</div></div><div class="w-item"><div class="w-val">${c.wind_speed_10m} km/h</div><div class="w-label">Wind</div></div><div class="w-item"><div class="w-val">${Math.round(c.surface_pressure)} hPa</div><div class="w-label">Pressure</div></div></div></div>` };
   }
 
-  // --- Code (GitHub source) ---
-  function decodeBase64(base64) {
-    try {
-      const binary = atob(base64.replace(/\s/g, ''));
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      return new TextDecoder('utf-8').decode(bytes);
-    } catch {
-      try { return atob(base64.replace(/\s/g, '')); } catch { return ''; }
-    }
-  }
-
-  async function fetchJSON(url) {
-    const res = await fetch(url);
-    if (res.status === 403) throw new Error('GitHub API rate limit reached. Please wait a few minutes and try again.');
-    if (!res.ok) throw new Error(`Request failed (${res.status})`);
-    return res.json();
-  }
-
-  async function handleGithub(query) {
-    try {
-      const repoData = await fetchJSON(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=1`);
-      if (!repoData.items?.length) {
-        return { html: `<p>No code repositories found for <strong>${escapeHTML(query)}</strong>.</p>` };
-      }
-
-      const repo = repoData.items[0];
-      const repoInfo = await fetchJSON(repo.url);
-      const branch = repoInfo.default_branch || 'main';
-      const treeData = await fetchJSON(`https://api.github.com/repos/${repo.full_name}/git/trees/${branch}?recursive=1`);
-
-      // Prefer an HTML file; otherwise fall back to the shallowest source file
-      const sourceFiles = (treeData.tree || [])
-        .filter(f => f.type === 'blob' && /\.(html|js|css|py|ts|jsx|tsx|c|cpp|java|rb|go|rs)$/i.test(f.path) && !/node_modules|vendor|dist|build|__pycache__|\.git/i.test(f.path));
-
-      const htmlFirst = sourceFiles
-        .slice()
-        .sort((a, b) => {
-          const aHtml = /\.html?$/i.test(a.path) ? 0 : 1;
-          const bHtml = /\.html?$/i.test(b.path) ? 0 : 1;
-          if (aHtml !== bHtml) return aHtml - bHtml;
-          return a.path.split('/').length - b.path.split('/').length;
-        });
-
-      const chosen = htmlFirst[0];
-
-      if (!chosen) {
-        return { html: `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but no source code files were detected.</p>` };
-      }
-
-      let rawContent = '';
-      try {
-        const fileData = await fetchJSON(chosen.url);
-        rawContent = fileData.content ? decodeBase64(fileData.content) : '';
-      } catch (fileErr) {
-        return { html: `<p><strong>Error fetching file:</strong> ${escapeHTML(fileErr.message)}</p>` };
-      }
-
-      if (!rawContent.trim()) {
-        return { html: `<p>Found <strong>${escapeHTML(repo.full_name)}</strong>, but the file was empty or too large to read.</p>` };
-      }
-
-      // ALWAYS build a full, runnable HTML document — even for short snippets
-      const fullHTML = wrapAsFullHTML(rawContent, chosen.path);
-      const fileName = /\.html?$/i.test(chosen.path) ? chosen.path : (chosen.path + ' → index.html');
-
-      const codeId = 'code_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-      const codeData = { content: fullHTML, name: fileName };
-      codeStore[codeId] = codeData;
-
-      const chatHtml = `<p>Built a full HTML file from <strong>${escapeHTML(repo.full_name)}</strong> (<code>${escapeHTML(chosen.path)}</code>). It's open in the side panel — hit <strong>Run Code</strong> to preview it.</p><button class="view-panel-btn" data-code-id="${codeId}"><i class="fas fa-expand"></i> View Full HTML & Run</button>`;
-
-      return { html: chatHtml, codeId, codeData };
-
-    } catch (err) {
-      return {
-        html: `<p><strong>Error:</strong> ${escapeHTML(err.message)}</p>`
-      };
-    }
-  }
+  function weatherCodeToIcon(code) { if (code === 0) return '☀️'; if (code <= 3) return '🌤️'; if (code <= 48) return '🌫️'; if (code <= 67) return '🌧️'; if (code <= 77) return '❄️'; if (code <= 82) return '🌦️'; if (code <= 86) return '🌨️'; if (code >= 95) return '⛈️'; return '🌡️'; }
+  function weatherCodeToText(code) { if (code === 0) return 'Clear sky'; if (code <= 3) return 'Partly cloudy'; if (code <= 48) return 'Foggy'; if (code <= 67) return 'Rainy'; if (code <= 77) return 'Snowy'; if (code <= 82) return 'Showers'; if (code <= 86) return 'Snow grains'; if (code >= 95) return 'Thunderstorm'; return 'Unknown'; }
 
   /* ============================================
-     CODE PANEL
+     CODE PANEL MANAGEMENT
      ============================================ */
   function openCodePanel(codeId) {
     const data = codeStore[codeId];
-    if (!data) {
-      showToast('Code data not found. It may have been cleared.', 'error');
-      return;
-    }
+    if (!data) { showToast('Code data not found. It may have been cleared.', 'error'); return; }
     currentRawCode = data.content;
     document.getElementById('panelFileName').textContent = data.name;
-    document.getElementById('runCodeBtn').style.display = 'none';
+    document.getElementById('runCodeBtn').style.display = 'flex';
     document.getElementById('panelPreview').classList.remove('active');
     document.getElementById('panelCode').style.display = 'block';
     document.getElementById('codePanel').classList.add('open');
@@ -1090,8 +898,7 @@ ${bodyContent}
     document.getElementById('chatColumn').classList.remove('panel-open');
     document.getElementById('panelPreview').classList.remove('active');
     document.getElementById('panelCode').style.display = 'block';
-    const iframe = document.getElementById('previewIframe');
-    iframe.src = 'about:blank';
+    document.getElementById('previewIframe').src = 'about:blank';
   }
 
   function copyPanelCode() {
@@ -1099,9 +906,7 @@ ${bodyContent}
       const btn = document.getElementById('panelCopyBtn');
       btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
       setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1500);
-    }).catch(() => {
-      showToast('Failed to copy code', 'error');
-    });
+    }).catch(() => showToast('Failed to copy code', 'error'));
   }
 
   function runCode() {
@@ -1109,110 +914,48 @@ ${bodyContent}
     const iframe = document.getElementById('previewIframe');
     document.getElementById('panelCode').style.display = 'none';
     preview.classList.add('active');
-
-    // currentRawCode is always a full HTML document at this point
-    const htmlContent = /<html[\s>]|<!DOCTYPE html>/i.test(currentRawCode)
-      ? currentRawCode
-      : wrapAsFullHTML(currentRawCode, 'index.html');
-
+    const htmlContent = /<html[\s>]|<!DOCTYPE html>/i.test(currentRawCode) ? currentRawCode : wrapAsFullHTML(currentRawCode, 'index.html');
     const blob = new Blob([htmlContent], { type: 'text/html' });
     iframe.src = URL.createObjectURL(blob);
-    showToast('Code executed successfully', 'success');
   }
 
   /* ============================================
-     MODAL & CONFIRM
+     UTILITIES & MODALS
      ============================================ */
-  function confirmClearChat() {
-    if (getActiveMessages().length === 0) return;
-    document.getElementById('modalTitle').textContent = 'Clear Chat?';
-    document.getElementById('modalMsg').textContent = 'Delete all messages in this session?';
-    modalCallback = () => {
-      sessions[activeSessionId].messages = [];
-      saveSessions();
-      rebuildCodeStore();
-      renderChat();
-      showToast('Chat cleared', 'success');
-    };
-    document.getElementById('confirmModal').classList.add('active');
+  function escapeHTML(str) { return String(str || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function escapeAttr(str) { return String(str || '').replace(/"/g, '&quot;'); }
+  function showToast(msg, type = '') {
+    const container = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${escapeHTML(msg)}`;
+    container.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(30px)'; setTimeout(() => t.remove(), 300); }, 3000);
   }
-
-  function closeModal() {
-    document.getElementById('confirmModal').classList.remove('active');
-    modalCallback = null;
-  }
-
-  document.getElementById('modalConfirmBtn').addEventListener('click', () => {
-    if (modalCallback) modalCallback();
-    closeModal();
-  });
-
-  /* ============================================
-     UTILITIES
-     ============================================ */
-  function weatherCodeToText(code) {
-    const m = { 0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Foggy', 48: 'Depositing rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle', 61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow', 77: 'Snow grains', 80: 'Slight showers', 81: 'Moderate showers', 82: 'Violent showers', 85: 'Slight snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Thunderstorm with heavy hail' };
-    return m[code] || 'Unknown';
-  }
-
-  function weatherCodeToIcon(code) {
-    if (code === 0) return '☀️';
-    if (code <= 2) return '⛅';
-    if (code === 3) return '☁️';
-    if (code <= 48) return '🌫️';
-    if (code <= 55) return '🌦️';
-    if (code <= 65) return '🌧️';
-    if (code <= 77) return '🌨️';
-    if (code <= 82) return '🌧️';
-    if (code >= 95) return '⛈️';
-    return '🌤️';
-  }
-
-  function escapeHTML(str) {
-    const d = document.createElement('div');
-    d.textContent = str == null ? '' : String(str);
-    return d.innerHTML;
-  }
-
-  // For use inside attribute values (escapes quotes too)
-  function escapeAttr(str) {
-    return escapeHTML(str).replace(/"/g, '&quot;');
-  }
-
   function openLightbox(src) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox').classList.add('active');
   }
-
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('active');
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+  function confirmClearChat() {
+    if (!activeSessionId) return;
+    showModal('Clear Chat?', 'Are you sure you want to clear all messages in this chat?', () => {
+      sessions[activeSessionId].messages = [];
+      saveSessions(); renderChat();
+      showToast('Chat cleared.', 'success');
+    });
   }
-
-  function showToast(msg, type = 'success') {
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${escapeHTML(msg)}`;
-    document.getElementById('toastContainer').appendChild(t);
-    setTimeout(() => {
-      t.style.opacity = '0';
-      t.style.transform = 'translateX(30px)';
-      t.style.transition = 'all 0.3s';
-      setTimeout(() => t.remove(), 300);
-    }, 3000);
+  function showModal(title, msg, callback) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMsg').textContent = msg;
+    document.getElementById('confirmModal').classList.add('active');
+    modalCallback = callback;
   }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeLightbox();
-      closeCodePanel();
-      closeModal();
-      closeSidebar();
-    }
-  });
-
-  window.addEventListener('load', () => {
-    document.getElementById('userInput').focus();
-  });
+  function closeModal() {
+    document.getElementById('confirmModal').classList.remove('active');
+    modalCallback = null;
+  }
+  document.getElementById('modalConfirmBtn').onclick = () => { if (modalCallback) modalCallback(); closeModal(); };
 
   init();
 </script>
